@@ -115,9 +115,9 @@ def compute_path_cost(T, knot_points, square=True):
 
     return dv_tot
 
-def plot_station(axes, scale):
+def plot_station(axes):
     translation = np.loadtxt('translate_station.txt', delimiter=',').reshape(1,1,3)
-    
+    scale = np.array([0])
     for i in range(15):
         meshfile = os.path.join(os.getcwd(), 'model', 'convex_detailed_station', str(i) + '.stl')
 
@@ -185,8 +185,7 @@ def plot_path(T, n_drift=20, distance='1.5m', local=False):
             full_path[i*n_drift + sub_i,:] = np.array([x, y, z])
 
     axes.plot(full_path[:,0], full_path[:,1], full_path[:,2], 'k')
-
-    plt.show()
+    return axes
 
 if __name__ == "__main__":
     # checking cw_v_init:

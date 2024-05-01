@@ -1,7 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-from utils import plot_path
+from utils import plot_path, plot_station
 from sys import argv
 
 
@@ -19,7 +19,9 @@ def visualize_traj(dist, local, t_max, soln_folder='solns'):
             break
     print('Found File: ', sol_path, '\nplotting...')
     T = np.loadtxt(sol_path)
-    plot_path(T, distance=str(dist) + 'm', local=local)
+    axes = plot_path(T, distance=str(dist) + 'm', local=local)
+    axes = plot_station(axes)
+    plt.show()
 
 if __name__ == '__main__':
     if argv[1] == '-h':
