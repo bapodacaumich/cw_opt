@@ -28,7 +28,6 @@ def ocp_no_obs(knot_points, T_max=99999.0):
     ## solver
     opts = {'ipopt.print_level': 0, 'print_time': 0, 'ipopt.tol': 1e-9}
     opti.solver('ipopt', opts)
-    print('Solving...')
     sol = opti.solve()
 
     return sol.value(T)
@@ -40,8 +39,6 @@ def ocp_wrapper_noobs(view_distance, local, save_dir='solns', filename='soln_t',
             if ((file[5] == 'l') and local) or ((file[5] != 'l') and not local):
                 knotfile=os.path.join(os.getcwd(), 'ccp_paths', file)
                 break
-
-    print('Importing Knot File: ', knotfile)
 
     knot_points = np.loadtxt(knotfile, delimiter=',')[:,:3] # get positions, not orientations
     # knots = filter_path_na(path) # get rid of configurations with nans

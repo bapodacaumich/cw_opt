@@ -23,10 +23,10 @@ def cw_v_init(start, end, t, n=1.1288e-3):
 
     sigma3 = (cos(n*t))**2
     sigma2 = (sin(n*t))**2
-    sigma1 = 4*sigma3 + 8*cos(n*t) + 4*sigma2 - 3*n*t*sin(n*t) + 4
+    sigma1 = 4*sigma3 - 8*cos(n*t) + 4*sigma2 - 3*n*t*sin(n*t) + 4
     vx = -n*(2*dy - 2*y - 2*dy*cos(n*t) - 4*dx*sin(n*t) + 2*y*cos(n*t) + 4*x*sin(n*t) + 3*dx*n*t - 3*n*t*x*cos(n*t))/sigma1
     vy = -n*(8*x - 2*dx + 2*dx*cos(n*t) - dy*sin(n*t) - 14*x*cos(n*t) + y*sin(n*t) + 6*x*sigma3 + 6*x*sigma2 - 6*n*t*x*sin(n*t))/sigma1
-    vz = n*(dz - z*cos(n*t))/np.sin(n*t)
+    vz = n*(dz - z*cos(n*t))/sin(n*t)
 
     return vx, vy, vz
 
@@ -161,7 +161,7 @@ def plot_path(T, n_drift=20, distance='1.5m', local=False):
         local (bool, optional): if path uses local tsp formulation. Defaults to False.
     """
     # load knot points
-    knots = load_knots(distance, local)
+    knots = load_knots(distance, local)[:,:3]
 
     # Create a new plot
     figure = plt.figure()
@@ -178,12 +178,17 @@ def plot_path(T, n_drift=20, distance='1.5m', local=False):
         last_knot = knots[i]
         next_knot = knots[i+1]
         cur_T = T[i]
-        vx, vy, vz = cw_v_init(last_knot, next_knot, cur_T)
+        v0 = cw_v_init(last_knot, next_knot, cur_T)
         drift = np.linspace(0, cur_T, n_drift)
         for sub_i, t in enumerate(drift):
-            x, y, z = cw_pose(last_knot, [vx, vy, vz], t)
+            x, y, z = cw_pose(last_knot, v0, t)
             full_path[i*n_drift + sub_i,:] = np.array([x, y, z])
 
     axes.plot(full_path[:,0], full_path[:,1], full_path[:,2], 'k')
 
     plt.show()
+
+if __name__ == "__main__":
+    # checking cw_v_init:
+    v0 = cw_v_init([0,0,0], [1,1,1], 1)
+    print(v0)
