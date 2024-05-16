@@ -1,10 +1,19 @@
-from casadi import Opti, DM
+from casadi import Opti, DM, sum2
 import numpy as np
 from utils import compute_path_cost
 import os
 from sys import argv
 
-def ocp_no_obs(knot_points, T_max=99999.0):
+def ocp_no_obs(knot_points, T_max=36000.0):
+    """set up and solve optimal control problem for drift trajectories with no obstacles
+
+    Args:
+        knot_points (np.array(N,3)): matrix of knot points for trajectory
+        T_max (float, optional): maximum path time. Defaults to 36000.0.
+
+    Returns:
+        _type_: _description_
+    """
 
     n_knots = knot_points.shape[0]
     opti = Opti()
@@ -13,7 +22,7 @@ def ocp_no_obs(knot_points, T_max=99999.0):
     T = opti.variable(n_knots-1,1)
 
     # constrain time intervals above 0 and below T_max
-    opti.subject_to(T <= T_max)
+    opti.subject_to(sum2(T) <= T_max)
     opti.subject_to(T > 0)
 
     # compute path cost

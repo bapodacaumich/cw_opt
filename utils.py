@@ -2,6 +2,7 @@ from casadi import sin, cos, sqrt
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from numpy import linalg as la
 from stl import mesh
 from mpl_toolkits import mplot3d
 
@@ -115,6 +116,50 @@ def compute_path_cost(T, knot_points, square=True):
 
     return dv_tot
 
+def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=True):
+
+    # ensure sizes are correct
+    assert knot_points.shape[0] == intermediate_points.shape[0]+1 == T.shape[0]+1
+
+    n_knots = knot_points.shape[0]
+    last_v = [0,0,0]
+    dv_tot = 0
+
+    for i in range(n_knots-1):
+        ## drift from knot point to intermediate point
+        last_knot = knot_points[i]
+        next_knot = intermediate_points[i]
+        cur_T = T[i*2]
+
+        # get initial velocity for drift trajectory based on cur_T
+        vx, vy, vz = cw_v_init(last_knot, next_knot, cur_T)
+
+        # compute delta-v and add to total
+        if square: dv_tot += (last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2
+        else: dv_tot += sqrt((last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2)
+
+        # get final velocity for drift trajectory based on cur_T
+        last_v = cw_v_end(last_knot, [vx, vy, vz], cur_T)
+        # vx_end, vy_end, vz_end = cw_v_end(last_knot, [vx, vy, vz], cur_T)
+        # last_v = [vx_end, vy_end, vz_end]
+
+        ## drift from intermediate point to knot point
+        last_knot = intermediate_points[i]
+        next_knot = knot_points[i+1]
+        cur_T = T[i*2+1]
+
+        # get initial velocity for drift trajectory based on cur_T
+        vx, vy, vz = cw_v_init(last_knot, next_knot, cur_T)
+
+        # compute delta-v and add to total
+        if square: dv_tot += (last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2
+        else: dv_tot += sqrt((last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2)
+
+        # get final velocity for drift trajectory based on cur_T
+        last_v = cw_v_end(last_knot, [vx, vy, vz], cur_T)
+        # vx_end, vy_end, vz_end = cw_v_end(last_knot, [vx, vy, vz], cur_T)
+        # last_v = [vx_end, vy_end, vz_end]
+
 def plot_station(axes):
     translation = np.loadtxt('translate_station.txt', delimiter=',').reshape(1,1,3)
     scale = np.array([0])
@@ -186,6 +231,32 @@ def plot_path(T, n_drift=20, distance='1.5m', local=False):
 
     axes.plot(full_path[:,0], full_path[:,1], full_path[:,2], 'k')
     return axes
+
+def load_mesh(mesh_file, show=False):
+    """
+    import mesh .stl file
+    returns mesh face normals and single point on face to establish plane position
+    """
+
+    if show: print('Importing mesh: ', mesh_file)
+    mesh_file = os.path.join(os.getcwd(), mesh_file)
+    str_mesh = mesh.Mesh.from_file(mesh_file)
+
+    return str_mesh.normals/la.norm(str_mesh.normals), str_mesh.v0
+
+def load_station_mesh():
+    # get station translation for ccp path
+    station_offset = np.loadtxt('translate_station.txt', delimiter=',')
+
+    # import normals and surface points
+    obs = []
+    for i in range(15):
+        meshfile = os.path.join('model', 'convex_detailed_station', str(i) + '.stl')
+        normals, points = load_mesh(meshfile)
+        points += station_offset
+        obs.append((normals, points))
+
+    return obs
 
 if __name__ == "__main__":
     # checking cw_v_init:
