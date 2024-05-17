@@ -1,6 +1,7 @@
 from casadi import *
 from utils import cw_pose, cw_v_init
 from numpy.linalg import norm
+from tqdm import tqdm
 import numpy as np
 
 def enforce_convex_hull_from_points(normals, points, opti, X, min_station_distance):
@@ -18,7 +19,7 @@ def enforce_convex_hull_from_points(normals, points, opti, X, min_station_distan
     num_normals = normals.shape[0]
 
     # for each state timestep we apply the convex hull keepout constraint
-    for j in range(num_timesteps):
+    for j in tqdm(range(num_timesteps)):
 
         # # get point to evaluate constraint
         x = X[j] # state at timestep j (just position)
@@ -81,5 +82,5 @@ def enforce_station_convex_hull(opti, K, IPs, T, obs, min_station_distance=1, nT
 
     for oi, o in enumerate(obs):
         normals, points = o
-        print(f'Enforcing {len(X)} timesteps for Obstacle {oi}...')
+        print(f'Enforcing {len(X)} timesteps for Obstacle {oi+1}/{len(obs)}...')
         enforce_convex_hull_from_points(normals, points, opti, X, min_station_distance)

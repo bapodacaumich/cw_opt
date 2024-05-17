@@ -119,7 +119,8 @@ def compute_path_cost(T, knot_points, square=True):
 def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=True):
 
     # ensure sizes are correct
-    assert knot_points.shape[0] == intermediate_points.shape[0]+1 == T.shape[0]+1
+    print(knot_points.shape[0], intermediate_points.shape[0], T.shape[0])
+    assert (knot_points.shape[0]-1)*2 == intermediate_points.shape[0]*2 == T.shape[0]
 
     n_knots = knot_points.shape[0]
     last_v = [0,0,0]
