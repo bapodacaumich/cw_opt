@@ -1,4 +1,4 @@
-from casadi import sin, cos, sqrt
+from casadi import sin, cos, sqrt, vertcat, DM
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -118,10 +118,6 @@ def compute_path_cost(T, knot_points, square=True):
 
 def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=True):
 
-    # ensure sizes are correct
-    print(knot_points.shape[0], intermediate_points.shape[0], T.shape[0])
-    assert (knot_points.shape[0]-1)*2 == intermediate_points.shape[0]*2 == T.shape[0]
-
     n_knots = knot_points.shape[0]
     last_v = [0,0,0]
     dv_tot = 0
@@ -129,7 +125,7 @@ def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=T
     for i in range(n_knots-1):
         ## drift from knot point to intermediate point
         last_knot = knot_points[i]
-        next_knot = intermediate_points[i]
+        next_knot = intermediate_points[i,:]
         cur_T = T[i*2]
 
         # get initial velocity for drift trajectory based on cur_T
@@ -145,7 +141,7 @@ def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=T
         # last_v = [vx_end, vy_end, vz_end]
 
         ## drift from intermediate point to knot point
-        last_knot = intermediate_points[i]
+        last_knot = intermediate_points[i,:]
         next_knot = knot_points[i+1]
         cur_T = T[i*2+1]
 
@@ -160,6 +156,8 @@ def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=T
         last_v = cw_v_end(last_knot, [vx, vy, vz], cur_T)
         # vx_end, vy_end, vz_end = cw_v_end(last_knot, [vx, vy, vz], cur_T)
         # last_v = [vx_end, vy_end, vz_end]
+
+    return dv_tot
 
 def plot_station(axes):
     translation = np.loadtxt('translate_station.txt', delimiter=',').reshape(1,1,3)
@@ -258,6 +256,23 @@ def load_station_mesh():
         obs.append((normals, points))
 
     return obs
+
+def get_initial_intermediate(T, knots):
+    # compute intermediate points halfway through each drift trajectory for initialization
+    nIP = T.shape[0]//2
+    IPs = DM(nIP, 3)
+    for i in range(nIP):
+        t = T[i]
+        last_knot = knots[i]
+        next_knot = knots[i+1]
+
+        v0 = cw_v_init(last_knot, next_knot, t)
+        ipx, ipy, ipz = cw_pose(last_knot, v0, t) # intermediate point
+        IPs[i,0] = ipx
+        IPs[i,1] = ipy
+        IPs[i,2] = ipz
+
+    return IPs
 
 if __name__ == "__main__":
     # checking cw_v_init:

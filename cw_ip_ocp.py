@@ -1,7 +1,7 @@
 # clohessy wiltshire intermediate point method
 from casadi import Opti, DM, sum2
 import numpy as np
-from utils import compute_path_cost_intermediate, load_station_mesh
+from utils import compute_path_cost_intermediate, load_station_mesh, get_initial_intermediate
 import os
 from sys import argv
 from constraints import enforce_station_convex_hull
@@ -29,7 +29,7 @@ def ocp_intermediate(knot_points, T_max=36000.0):
     obs = load_station_mesh()
     print('Enforcing station convex hull...')
     tstart = perf_counter()
-    enforce_station_convex_hull(opti, knot_points, X, T, obs)
+    # enforce_station_convex_hull(opti, knot_points, X, T, obs)
     print('Done!')
     print('Time elapsed: ', perf_counter()-tstart, 's')
 
@@ -38,13 +38,19 @@ def ocp_intermediate(knot_points, T_max=36000.0):
     opti.subject_to(T > 0)
 
     # compute path cost
-    dv_tot = compute_path_cost_intermediate(T, knot_points, intermediate_points=X)
+    dv_tot = compute_path_cost_intermediate(T, knot_points, intermediate_points=X, square=True)
 
     # minimize total delta-v
     opti.minimize(dv_tot)
 
     # warm start with reasonable values
-    opti.set_initial(T, DM.ones(n_knots-1,1))
+    Tinit = DM.ones(n_knots*2-2,1)*1
+    opti.set_initial(T, Tinit)
+    IPinit = get_initial_intermediate(Tinit, knot_points)
+    opti.set_initial(X, IPinit)
+
+    # print(Tinit)
+    # print(IPinit)
 
     ## solver
     opts = {'ipopt.print_level': 0, 'print_time': 0, 'ipopt.tol': 1e-9}
@@ -53,7 +59,7 @@ def ocp_intermediate(knot_points, T_max=36000.0):
 
     return sol.value(T), sol.value(X)
 
-def ocp_wrapper_intermediate(view_distance, local, save_dir='intermediate', filename='soln_t', T_max=36000.0):
+def ocp_wrapper_intermediate(view_distance, local, save_dir='intermediate', T_max=36000.0):
 
     for file in os.listdir(os.path.join(os.getcwd(), 'ccp_paths')):
         if str(view_distance) == file[:4]:
@@ -80,7 +86,7 @@ def ocp_wrapper_intermediate(view_distance, local, save_dir='intermediate', file
 if __name__ == "__main__":
     if argv[1] == '-h':
         print('python cw_ocp.py view_distance locality max_drift_period')
-        print('DEFAULT: python cw_ocp.py 1.5m True 1000.0')
+        print('DEFAULT: python cw_ip_ocp.py 1.5m True intermediate 1000.0')
     else:
         local_in = (argv[2]=='True' or argv[2]=='true' or argv[2] == 'T' or argv[2] == 't')
         ocp_wrapper_intermediate(argv[1], local_in, save_dir=argv[3], T_max=float(argv[4]))
