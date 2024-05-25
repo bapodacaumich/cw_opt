@@ -118,6 +118,10 @@ def compute_path_cost(T, knot_points, square=True):
 
 def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=True):
 
+    # ensure sizes are correct
+    # print(knot_points.shape[0], intermediate_points.shape[0], T.shape[0])
+    # assert (knot_points.shape[0]-1)*2 == intermediate_points.shape[0]*2 == T.shape[0]
+
     n_knots = knot_points.shape[0]
     last_v = [0,0,0]
     dv_tot = 0
@@ -156,6 +160,24 @@ def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=T
         last_v = cw_v_end(last_knot, [vx, vy, vz], cur_T)
         # vx_end, vy_end, vz_end = cw_v_end(last_knot, [vx, vy, vz], cur_T)
         # last_v = [vx_end, vy_end, vz_end]
+    return dv_tot
+
+def debug_save_vars_intermediate(opti, T, dv_tot, X, debug_dir, i):
+    """save all variables for debugging
+
+    Args:
+        opti (opti): opti stack object to save from
+        T (opti variable): drift period symbolic variable (Vector)
+        dv_tot (opti variable): total delta-v symbolic variable
+        X (opti variable): intermediate points symbolic variable (Matrix)
+        debug_dir (os.path): directory to save intermediate solution
+        i (int): iteration number
+    """
+    if not os.path.exists(debug_dir): os.makedirs(debug_dir)
+    np.savetxt(os.path.join(debug_dir, 'T_' + str(i) + '.csv'), opti.debug.value(T), delimiter=',')
+    np.savetxt(os.path.join(debug_dir, 'X_' + str(i) + '.csv'), opti.debug.value(X), delimiter=',')
+    with open(os.path.join(debug_dir, 'cost.txt'), 'a') as f:
+        f.write(str(opti.debug.value(dv_tot))+'\n')
 
     return dv_tot
 
@@ -195,7 +217,7 @@ def load_knots(distance, local=False):
     # load knot points
     return np.loadtxt(knotfile, delimiter=',') # (N, 6)
 
-def plot_path(T, n_drift=20, distance='1.5m', local=False):
+def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False):
     """plot path from list of drift periods
 
     Args:
@@ -205,7 +227,15 @@ def plot_path(T, n_drift=20, distance='1.5m', local=False):
         local (bool, optional): if path uses local tsp formulation. Defaults to False.
     """
     # load knot points
-    knots = load_knots(distance, local)[:,:3]
+    if X is None: knots = load_knots(distance, local)[:,:3]
+    else:
+        knotpoints = load_knots(distance, local)[:,:3]
+        knots = []
+        for i in range(X.shape[0]):
+            knots.append(knotpoints[i,:])
+            knots.append(X[i,:])
+        knots.append(knotpoints[-1,:])
+        knots = np.array(knots)
 
     # Create a new plot
     figure = plt.figure()
@@ -213,7 +243,7 @@ def plot_path(T, n_drift=20, distance='1.5m', local=False):
     
     # plot knot points
     # axes.plot(knots[:,0], knots[:,1], knots[:,2],'k--')
-    axes.scatter(knots[:,0], knots[:,1], knots[:,2], 'rx')
+    # axes.scatter(knots[:,0], knots[:,1], knots[:,2], 'rx')
 
     # plot subtrajectories
     n_subtraj = knots.shape[0]-1
@@ -228,7 +258,20 @@ def plot_path(T, n_drift=20, distance='1.5m', local=False):
             x, y, z = cw_pose(last_knot, v0, t)
             full_path[i*n_drift + sub_i,:] = np.array([x, y, z])
 
+    axes.scatter(knotpoints[:,0], knotpoints[:,1], knotpoints[:,2], c='tab:orange', marker='o', lw=5, label='Knot Points')
+    axes.scatter(X[:,0], X[:,1], X[:,2], c='tab:purple', marker='x', lw=5, label='Intermediate Points')
     axes.plot(full_path[:,0], full_path[:,1], full_path[:,2], 'k')
+    axes.plot([full_path[0,0], full_path[-1,0]], [full_path[0,1], full_path[-1,1]], [full_path[0,2], full_path[-1,2]], 'rx')
+    xmin = np.min(full_path[:,0])
+    xmax = np.max(full_path[:,0])
+    ymin = np.min(full_path[:,1])
+    ymax = np.max(full_path[:,1])
+    zmin = np.min(full_path[:,2])
+    zmax = np.max(full_path[:,2])
+    axes.set_xlim([xmin, xmax])
+    axes.set_ylim([ymin, ymax])
+    axes.set_zlim([zmin, zmax])
+    axes.set_box_aspect([xmax-xmin, ymax-ymin, zmax-zmin])
     return axes
 
 def load_mesh(mesh_file, show=False):
