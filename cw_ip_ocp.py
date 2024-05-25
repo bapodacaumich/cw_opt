@@ -1,13 +1,13 @@
 # clohessy wiltshire intermediate point method
 from casadi import Opti, DM, sum2
 import numpy as np
-from utils import compute_path_cost_intermediate, load_station_mesh
+from utils import compute_path_cost_intermediate, load_station_mesh, debug_save_vars_intermediate
 import os
 from sys import argv
 from constraints import enforce_station_convex_hull
 from time import perf_counter
 
-def ocp_intermediate(knot_points, T_max=36000.0):
+def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
     """set up and solve optimal control problem for drift trajectories with obstacles using intermediate points
 
     Args:
@@ -29,7 +29,7 @@ def ocp_intermediate(knot_points, T_max=36000.0):
     obs = load_station_mesh()
     print('Enforcing station convex hull...')
     tstart = perf_counter()
-    enforce_station_convex_hull(opti, knot_points, X, T, obs)
+    # enforce_station_convex_hull(opti, knot_points, X, T, obs)
     print('Done!')
     print('Time elapsed: ', perf_counter()-tstart, 's')
 
@@ -44,7 +44,21 @@ def ocp_intermediate(knot_points, T_max=36000.0):
     opti.minimize(dv_tot)
 
     # warm start with reasonable values
-    opti.set_initial(T, DM.ones(n_knots-1,1))
+    opti.set_initial(T, DM.ones((n_knots-1)*2,1))
+    opti.set_initial(X, knot_points[1:,:])
+
+    # debug print solution
+    # print('test:')
+    # print(compute_path_cost_intermediate(DM.ones((n_knots-1)*2,1), knot_points, intermediate_points=knot_points[1:,:]))
+
+    # debugger
+    if debug:
+        run_num=0
+        for file in os.listdir(os.path.join(os.getcwd(), 'debug')):
+            if 'run' in file:
+                run_num +=1
+        debug_dir = os.path.join(os.getcwd(), 'debug', 'run'+str(run_num))
+        opti.callback(lambda i: debug_save_vars_intermediate(opti, T, dv_tot, X, debug_dir, i))
 
     ## solver
     opts = {'ipopt.print_level': 0, 'print_time': 0, 'ipopt.tol': 1e-9}
@@ -81,6 +95,9 @@ if __name__ == "__main__":
     if argv[1] == '-h':
         print('python cw_ocp.py view_distance locality max_drift_period')
         print('DEFAULT: python cw_ocp.py 1.5m True 1000.0')
+    elif len(argv) == 3:
+        local_in = (argv[2]=='True' or argv[2]=='true' or argv[2] == 'T' or argv[2] == 't')
+        ocp_wrapper_intermediate(argv[1], local_in)
     else:
         local_in = (argv[2]=='True' or argv[2]=='true' or argv[2] == 'T' or argv[2] == 't')
         ocp_wrapper_intermediate(argv[1], local_in, save_dir=argv[3], T_max=float(argv[4]))
