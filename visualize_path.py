@@ -5,7 +5,7 @@ from utils import plot_path, plot_station
 from sys import argv
 
 
-def visualize_traj(dist, local, t_max, soln_folder='solns'):
+def visualize_traj(dist, local, t_max, soln_folder='intermediate'):
 
     locality=''
     if local: locality='_local'
@@ -22,6 +22,15 @@ def visualize_traj(dist, local, t_max, soln_folder='solns'):
     axes = plot_path(T, distance=str(dist) + 'm', local=local)
     axes = plot_station(axes)
     axes.legend()
+    plt.show()
+
+def visualize_intermediate_traj(dist='1.5m', local=True, t_max=36000.0, soln_folder='intermediate'):
+    if local: filetxt = dist + '_local_' + str(t_max)
+    else: filetxt = dist + '_' + str(t_max)
+    T = np.loadtxt(os.path.join(os.getcwd(), 'solns', soln_folder, filetxt + '_t.csv'))
+    X = np.loadtxt(os.path.join(os.getcwd(), 'solns', soln_folder, filetxt + '_x.csv'))
+    axes = plot_path(T, X, distance=dist, local=local)
+    axes = plot_station(axes)
     plt.show()
 
 def visualize_debug_traj(debug_folder='run2', dist='1.5m', local=True):
@@ -43,8 +52,12 @@ def visualize_debug_traj(debug_folder='run2', dist='1.5m', local=True):
 if __name__ == '__main__':
     if argv[1] == '-h':
         print('Example: \npython visualize_path.py 1.5 True 1000.0')
+        print('Example: \npython visualize_path.py -i 1.5m True 1000.0')
     elif argv[1] == '-d':
         visualize_debug_traj(debug_folder=argv[2], dist=1.5, local=True)
+    elif argv[1] == '-i':
+        local_in = (argv[3]=='True' or argv[3]=='true' or argv[3] == 'T' or argv[3] == 't')
+        visualize_intermediate_traj(argv[2], local_in, argv[4])
     else:
         local_in = (argv[2]=='True' or argv[2]=='true' or argv[2] == 'T' or argv[2] == 't')
         visualize_traj(float(argv[1]), local_in, float(argv[3]))

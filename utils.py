@@ -174,10 +174,10 @@ def debug_save_vars_intermediate(opti, T, dv_tot, X, debug_dir, i):
         i (int): iteration number
     """
     if not os.path.exists(debug_dir): os.makedirs(debug_dir)
-    np.savetxt(os.path.join(debug_dir, 'T_' + str(i) + '.csv'), opti.debug.value(T), delimiter=',')
-    np.savetxt(os.path.join(debug_dir, 'X_' + str(i) + '.csv'), opti.debug.value(X), delimiter=',')
+    np.savetxt(os.path.join(debug_dir, 'T.csv'), opti.debug.value(T), delimiter=',')
+    np.savetxt(os.path.join(debug_dir, 'X.csv'), opti.debug.value(X), delimiter=',')
     with open(os.path.join(debug_dir, 'cost.txt'), 'a') as f:
-        f.write(str(opti.debug.value(dv_tot))+'\n')
+        f.write(str(i) + ',' + str(opti.debug.value(dv_tot))+'\n')
 
     return dv_tot
 
@@ -213,8 +213,7 @@ def load_knots(distance, local=False):
         if (distance == file[:4]):
             if not ((file[5] == 'l') ^ local):
                 knotfile=os.path.join(os.getcwd(), 'ccp_paths', file)
-    # knotfile=join(getcwd(), 'ccp_paths', '1.5m43.662200005359864.csv')
-    # load knot points
+    # load and return knot points
     return np.loadtxt(knotfile, delimiter=',') # (N, 6)
 
 def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False):
