@@ -47,7 +47,7 @@ def enforce_convex_hull_from_points(normals, points, opti, X, min_station_distan
             print(x)
             print(e)
 
-def enforce_station_convex_hull(opti, K, IPs, T, obs, min_station_distance=1, nT=3):
+def enforce_station_convex_hull(opti, K, IPs, T, obs, min_station_distance=1, nT=1):
     """enforce convex hull for the station obstacle given knot points, intermediate points, and minimum station proximity
 
     Args:
