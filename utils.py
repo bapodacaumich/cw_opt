@@ -1,4 +1,4 @@
-from casadi import sin, cos, sqrt, vertcat, DM
+from casadi import *
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -117,13 +117,24 @@ def compute_path_cost(T, knot_points, square=True):
     return dv_tot
 
 def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=True):
+    """compute the delta-v cost of a path given drift periods between alternating knot points and intermediate points
+
+    Args:
+        T (optistack.varable): opti.variable(n_drift, 1) drift periods between knot points and intermediate points
+        knot_points (np.array(n_knots,3)): matrix of knot points for trajectory
+        intermediate_points (optistack.variable): opti.variable(n_knots-1, 3) of intermediate points
+        square (bool, optional): return the square cost for optimization purposes(quadratic). Defaults to True.
+
+    Returns:
+        DM: un/squared path cost in delta-v
+    """
 
     # ensure sizes are correct
     # print(knot_points.shape[0], intermediate_points.shape[0], T.shape[0])
     # assert (knot_points.shape[0]-1)*2 == intermediate_points.shape[0]*2 == T.shape[0]
 
     n_knots = knot_points.shape[0]
-    last_v = [0,0,0]
+    last_v = [0,0,0] # initial velocity
     dv_tot = 0
 
     for i in range(n_knots-1):
@@ -136,8 +147,8 @@ def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=T
         vx, vy, vz = cw_v_init(last_knot, next_knot, cur_T)
 
         # compute delta-v and add to total
-        if square: dv_tot += (last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2
-        else: dv_tot += sqrt((last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2)
+        if square: dv_tot += (vx-last_v[0])**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2
+        else: dv_tot += sqrt((vx-last_v[0])**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2)
 
         # get final velocity for drift trajectory based on cur_T
         last_v = cw_v_end(last_knot, [vx, vy, vz], cur_T)

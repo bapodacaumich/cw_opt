@@ -1,5 +1,4 @@
 # clohessy wiltshire intermediate point method
-# from casadi import Opti, DM, sum2
 from casadi import *
 import numpy as np
 from utils import compute_path_cost_intermediate, load_station_mesh, debug_save_vars_intermediate, get_initial_intermediate
@@ -20,17 +19,19 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
     """
 
     n_knots = knot_points.shape[0]
+    n_intermediate = n_knots-1
     opti = Opti()
 
     # time intervals for each traj between knot points
-    T = opti.variable(n_knots*2-2,1)    # two drift periods between each knot point
+    n_drift = (n_knots + n_intermediate) - 1 # drift periods between each knot and intermediate point
+    T = opti.variable(n_drift,1)    # drift periods between each knot and intermediate point
     X = opti.variable(n_knots-1,3)      # one less intermediate point than knot points (between each pair of knot points)
 
     # constrain path to maintain keepout region
     obs = load_station_mesh()
     print('Enforcing station convex hull...')
     tstart = perf_counter()
-    # enforce_station_convex_hull(opti, knot_points, X, T, obs)
+    enforce_station_convex_hull(opti, knot_points, X, T, obs)
     print('Done!')
     print('Time elapsed: ', perf_counter()-tstart, 's')
 
@@ -44,18 +45,16 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
     # minimize total delta-v
     opti.minimize(dv_tot)
 
-    # warm start with reasonable values -- middle of drift trajectory
-    # Tinit = DM.ones(n_knots*2-2,1)*1
-    # opti.set_initial(T, Tinit)
-    # IPinit = get_initial_intermediate(Tinit, knot_points)
-    # opti.set_initial(X, IPinit)
-
-
     # set initial drift period values to 1s
-    opti.set_initial(T, DM.ones((n_knots-1)*2,1))
+    Tinit = DM.ones(n_drift,1)
+    opti.set_initial(T, Tinit)
 
-    # set initial intermediate points to next knot point
-    opti.set_initial(X, knot_points[1:,:])
+    # warm start with reasonable values -- middle of drift trajectory
+    IPinit = get_initial_intermediate(Tinit, knot_points)
+    opti.set_initial(X, IPinit)
+
+    # # set initial intermediate points to next knot point
+    # opti.set_initial(X, knot_points[1:,:])
 
     # debug print solution
     # print('test:')
