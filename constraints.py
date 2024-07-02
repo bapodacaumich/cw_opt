@@ -75,9 +75,9 @@ def enforce_station_convex_hull(opti, K, IPs, T, obs, min_station_distance=1, nT
 
         # get path discretization
         for i in range(2):
-            dt = ts[i]/(nT+2)
+            dt = ts[i]/(nT+1)
             v0 = cw_v_init(starts[i], ends[i], ts[i])
-            for j in range(nT+2):
+            for j in range(nT):
                 X.append(cw_pose(starts[i], v0, dt*(j+1)))
 
     for oi, o in enumerate(obs):
