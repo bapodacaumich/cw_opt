@@ -51,7 +51,6 @@ def visualize_debug_traj(debug_folder='run2', dist='1.5m', local=True):
 
 if __name__ == '__main__':
     if argv[1] == '-h':
-        print('Example: \npython visualize_path.py 1.5 True 1000.0')
         print('Example: \npython visualize_path.py -i 1.5m True 1000.0')
     elif argv[1] == '-d':
         visualize_debug_traj(debug_folder=argv[2], dist=1.5, local=True)
