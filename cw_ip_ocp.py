@@ -75,7 +75,11 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
     ## solver
     opts = {'ipopt.print_level': 0, 'print_time': 0, 'ipopt.tol': 1e-9, 'ipopt.max_iter':5000}
     opti.solver('ipopt', opts)
-    sol = opti.solve()
+    try:
+        sol = opti.solve()
+    except RuntimeError:
+        print('RUNTIME ERROR, will save non-converged values anyways')
+        return opti.debug.value(T), opti.debug.value(X)
 
     return sol.value(T), sol.value(X)
 
