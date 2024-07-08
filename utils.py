@@ -201,9 +201,9 @@ def plot_station(axes):
         # Load the STL files and add the vectors to the plot
         your_mesh = mesh.Mesh.from_file(meshfile)
         vectors = your_mesh.vectors + translation
-        axes.add_collection3d(mplot3d.art3d.Poly3DCollection(vectors))
+        axes.add_collection3d(mplot3d.art3d.Poly3DCollection(vectors, facecolors='tab:blue', linewidths=0, alpha=0.2))
         wf = vectors.reshape(-1, 3)
-        axes.plot(wf[:,0], wf[:,1], wf[:,2], 'k')
+        axes.plot(wf[:,0], wf[:,1], wf[:,2], 'k', linewidth=0.07)
 
         # Auto scale to the mesh size
         scale = np.concatenate((scale, your_mesh.points.flatten()))
