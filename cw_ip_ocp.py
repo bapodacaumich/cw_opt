@@ -83,7 +83,7 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
 
     return sol.value(T), sol.value(X)
 
-def ocp_wrapper_intermediate(view_distance, local, save_dir='intermediate', T_max=36000.0, debug=False):
+def ocp_wrapper_intermediate(view_distance, local, save_dir='intermediate', T_max=1000.0, debug=False):
 
     for file in os.listdir(os.path.join(os.getcwd(), 'ccp_paths')):
         if str(view_distance) == file[:4]:
@@ -112,6 +112,7 @@ if __name__ == "__main__":
         print('python cw_ocp.py view_distance locality max_drift_period')
         print('DEFAULT: python cw_ip_ocp.py 1.5m True intermediate 1000.0')
     elif len(argv) == 3:
+        print('Debug Mode Activated!')
         local_in = (argv[2]=='True' or argv[2]=='true' or argv[2] == 'T' or argv[2] == 't')
         ocp_wrapper_intermediate(argv[1], local_in, debug=True)
     else:

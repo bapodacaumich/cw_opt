@@ -37,6 +37,8 @@ def visualize_debug_traj(debug_folder='run2', dist='1.5m', local=True):
 
     highest_iter = 0
     for file in os.listdir(os.path.join(os.getcwd(), 'debug', debug_folder)):
+        print(file)
+        print(file[2:-4])
         if file[0] == 'T' and int(file[2:-4]) > highest_iter:
             highest_iter = int(file[2:-4])
             file_end = file[1:]
@@ -53,7 +55,7 @@ if __name__ == '__main__':
     if argv[1] == '-h':
         print('Example: \npython visualize_path.py -i 1.5m True 1000.0')
     elif argv[1] == '-d':
-        visualize_debug_traj(debug_folder=argv[2], dist=1.5, local=True)
+        visualize_debug_traj(debug_folder=argv[2], dist='2.0m', local=True)
     elif argv[1] == '-i':
         local_in = (argv[3]=='True' or argv[3]=='true' or argv[3] == 'T' or argv[3] == 't')
         visualize_intermediate_traj(argv[2], local_in, argv[4])
