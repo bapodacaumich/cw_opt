@@ -227,7 +227,7 @@ def load_knots(distance, local=False):
     # load and return knot points
     return np.loadtxt(knotfile, delimiter=',') # (N, 6)
 
-def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False):
+def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
     """plot path from list of drift periods
 
     Args:
@@ -248,8 +248,13 @@ def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False):
         knots = np.array(knots)
 
     # Create a new plot
-    figure = plt.figure()
-    axes = figure.add_subplot(projection='3d')
+    if axes is None:
+        figure = plt.figure()
+        axes = figure.add_subplot(projection='3d')
+        hold = False
+    else:
+        hold = True
+        
     
     # plot knot points
     # axes.plot(knots[:,0], knots[:,1], knots[:,2],'k--')
@@ -268,10 +273,22 @@ def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False):
             x, y, z = cw_pose(last_knot, v0, t)
             full_path[i*n_drift + sub_i,:] = np.array([x, y, z])
 
-    axes.scatter(knotpoints[:,0], knotpoints[:,1], knotpoints[:,2], c='tab:orange', marker='o', lw=5, label='Knot Points')
-    axes.scatter(X[:,0], X[:,1], X[:,2], c='tab:purple', marker='x', lw=5, label='Intermediate Points')
-    axes.plot(full_path[:,0], full_path[:,1], full_path[:,2], 'k')
-    axes.plot([full_path[0,0], full_path[-1,0]], [full_path[0,1], full_path[-1,1]], [full_path[0,2], full_path[-1,2]], 'rx')
+    if hold: 
+        knot_color = 'tab:green'
+        knot_label = 'Secondary Knot Points'
+        path_color = 'tab:brown'
+        intermediate_color = 'tab:red'
+        intermediate_label = 'Secondary Intermediate Points'
+    else:
+        knot_color = 'tab:orange'
+        knot_label = 'Knot Points'
+        path_color = 'k'
+        intermediate_color = 'tab:purple'
+        intermediate_label = 'Intermediate Points'
+    axes.scatter(knotpoints[:,0], knotpoints[:,1], knotpoints[:,2], c=knot_color, marker='o', lw=5, label=knot_label)
+    axes.scatter(X[:,0], X[:,1], X[:,2], c=intermediate_color, marker='x', lw=5, label=intermediate_label)
+    axes.plot(full_path[:,0], full_path[:,1], full_path[:,2], 'k', label='')
+    axes.plot([full_path[0,0], full_path[-1,0]], [full_path[0,1], full_path[-1,1]], [full_path[0,2], full_path[-1,2]], 'rx', label='')
     xmin = np.min(full_path[:,0])
     xmax = np.max(full_path[:,0])
     ymin = np.min(full_path[:,1])
