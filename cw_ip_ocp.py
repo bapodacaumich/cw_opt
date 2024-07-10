@@ -73,7 +73,7 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
         print('Debug run: ', run_num)
 
     ## solver
-    opts = {'ipopt.print_level': 0, 'print_time': 0, 'ipopt.tol': 1e-9, 'ipopt.max_iter':5000, 'ipopt.print_level': 12}
+    opts = {'ipopt.print_level': 0, 'print_time': 0, 'ipopt.tol': 1e-9, 'ipopt.max_iter':5000, 'ipopt.print_level': 7}
     opti.solver('ipopt', opts)
     try:
         sol = opti.solve()
