@@ -26,6 +26,10 @@ def enforce_convex_hull_from_points(normals, points, opti, X, min_station_distan
 
         # create a convex hull keepout constraint for each time step:
         dot_max = -1 # we can instantiate the max dot product as -1 because dot products less than zero do not satisfy the constraint (we take maximum)
+
+        # create vector of dot products for each face normal
+        dots = MX(num_normals,1)
+
         for i in range(num_normals):
 
             # first retrieve parameters for each face instance
@@ -34,9 +38,11 @@ def enforce_convex_hull_from_points(normals, points, opti, X, min_station_distan
 
             # only one dot product must be greater than zero so we take the maximum value
             # of all of them to use as the constraint (for each timestep)
-            dot_max = fmax(dot_max, n[0]*(x[0]-p[0]) + n[1]*(x[1]-p[1]) + n[2]*(x[2]-p[2])) # Given convexity, pull out the closest face to x (state)
+            dots[i,0] = n[0]*(x[0]-p[0]) + n[1]*(x[1]-p[1]) + n[2]*(x[2]-p[2]) # Given convexity, pull out the closest face to x (state)
+            # dot_max = fmax(dot_max, n[0]*(x[0]-p[0]) + n[1]*(x[1]-p[1]) + n[2]*(x[2]-p[2])) # Given convexity, pull out the closest face to x (state)
         
         # if max dot product value is above zero, then constraint is met (only one needs to be greater)
+        dot_max = mmax(dots)
         try: opti.subject_to(dot_max > min_station_distance)
         except Exception as e:
             print('max, min distance, len(x), j, x, e')
