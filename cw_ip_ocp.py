@@ -24,6 +24,7 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
 
     # time intervals for each traj between knot points
     n_drift = (n_knots + n_intermediate) - 1 # drift periods between each knot and intermediate point
+    print('Number of drift periods: ', n_drift)
     # T = opti.variable(n_drift,1)    # drift periods between each knot and intermediate point
     T = np.ones((n_drift,1))*10 # drift periods between each knot and intermediate point -- trying with constant drift periods
     X = opti.variable(n_knots-1,3)      # one less intermediate point than knot points (between each pair of knot points)
