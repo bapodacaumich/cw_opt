@@ -26,7 +26,7 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
     n_drift = (n_knots + n_intermediate) - 1 # drift periods between each knot and intermediate point
     print('Number of drift periods: ', n_drift)
     # T = opti.variable(n_drift,1)    # drift periods between each knot and intermediate point
-    T = np.ones((n_drift,1))*10 # drift periods between each knot and intermediate point -- trying with constant drift periods
+    T = np.ones((n_drift,1))*T_max/n_drift # drift periods between each knot and intermediate point -- trying with constant drift periods
     X = opti.variable(n_knots-1,3)      # one less intermediate point than knot points (between each pair of knot points)
 
     # constrain path to maintain keepout region
@@ -79,6 +79,7 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
     opts = {'ipopt.print_level': 0, 'print_time': 0, 'ipopt.tol': 1e-9, 'ipopt.max_iter':5000, 'ipopt.print_level': 7}
     opti.solver('ipopt', opts)
     try:
+        print('Solving...')
         sol = opti.solve()
     except RuntimeError:
         print('RUNTIME ERROR, will save non-converged values anyways')
