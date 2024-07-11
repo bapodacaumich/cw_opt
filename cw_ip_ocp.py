@@ -24,7 +24,8 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
 
     # time intervals for each traj between knot points
     n_drift = (n_knots + n_intermediate) - 1 # drift periods between each knot and intermediate point
-    T = opti.variable(n_drift,1)    # drift periods between each knot and intermediate point
+    # T = opti.variable(n_drift,1)    # drift periods between each knot and intermediate point
+    T = np.ones((n_drift,1))*10 # drift periods between each knot and intermediate point -- trying with constant drift periods
     X = opti.variable(n_knots-1,3)      # one less intermediate point than knot points (between each pair of knot points)
 
     # constrain path to maintain keepout region
@@ -35,9 +36,9 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
     print('Done!')
     print('Time elapsed: ', perf_counter()-tstart, 's')
 
-    # constrain time intervals above 0 and total below T_max
-    opti.subject_to(sum2(T) <= T_max) # TODO: check columnwise sum is correct (T should be Nx1)
-    opti.subject_to(T > 0)
+    # # constrain time intervals above 0 and total below T_max
+    # opti.subject_to(sum2(T) <= T_max) # TODO: check columnwise sum is correct (T should be Nx1)
+    # opti.subject_to(T > 0)
 
     # compute path cost
     dv_tot = compute_path_cost_intermediate(T, knot_points, intermediate_points=X, square=True)
@@ -46,11 +47,12 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
     opti.minimize(dv_tot)
 
     # set initial drift period values to 1s
-    Tinit = DM.ones(n_drift,1)
-    opti.set_initial(T, Tinit)
+    # Tinit = DM.ones(n_drift,1)
+    # opti.set_initial(T, Tinit)
 
     # warm start with reasonable values -- middle of drift trajectory
-    IPinit = get_initial_intermediate(Tinit, knot_points)
+    # IPinit = get_initial_intermediate(Tinit, knot_points)
+    IPinit = get_initial_intermediate(T, knot_points)
     opti.set_initial(X, IPinit)
 
     # # set initial intermediate points to next knot point
@@ -79,9 +81,11 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
         sol = opti.solve()
     except RuntimeError:
         print('RUNTIME ERROR, will save non-converged values anyways')
-        return opti.debug.value(T), opti.debug.value(X)
+        # return opti.debug.value(T), opti.debug.value(X)
+        return T, opti.debug.value(X)
 
-    return sol.value(T), sol.value(X)
+    # return sol.value(T), sol.value(X)
+    return T, sol.value(X)
 
 def ocp_wrapper_intermediate(view_distance, local, save_dir='intermediate', T_max=1000.0, debug=False):
 
