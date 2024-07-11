@@ -43,15 +43,24 @@ def enforce_convex_hull_from_points(normals, points, opti, X, min_station_distan
         
         # if max dot product value is above zero, then constraint is met (only one needs to be greater)
         dot_max = mmax(dots)
-        try: opti.subject_to(dot_max > min_station_distance)
-        except Exception as e:
-            print('max, min distance, len(x), j, x, e')
-            print(dot_max)
-            print(min_station_distance)
-            print(len(X))
-            print(j)
-            print(x)
-            print(e)
+        opti.subject_to(dot_max > min_station_distance)
+
+def max_dot_product(n, p, x, n_normals):
+    # create vector of dot products for each face normal
+    dots = MX(n_normals,1)
+
+    for i in range(n_normals):
+
+        # first retrieve parameters for each face instance
+        n = n/norm(n) # normalized face normal
+
+        # only one dot product must be greater than zero so we take the maximum value
+        # of all of them to use as the constraint (for each timestep)
+        dots[i,0] = n[0]*(x[0]-p[0]) + n[1]*(x[1]-p[1]) + n[2]*(x[2]-p[2]) # Given convexity, pull out the closest face to x (state)
+        # dot_max = fmax(dot_max, n[0]*(x[0]-p[0]) + n[1]*(x[1]-p[1]) + n[2]*(x[2]-p[2])) # Given convexity, pull out the closest face to x (state)
+    
+    # if max dot product value is above zero, then constraint is met (only one needs to be greater)
+    return mmax(dots)
 
 def enforce_station_convex_hull(opti, K, IPs, T, obs, min_station_distance=0, nT=3):
     """enforce convex hull for the station obstacle given knot points, intermediate points, and minimum station proximity
