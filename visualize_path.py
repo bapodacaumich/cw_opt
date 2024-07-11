@@ -75,7 +75,10 @@ if __name__ == '__main__':
         visualize_debug_traj(debug_folder=argv[2], dist='2.0m', local=True)
     elif argv[1] == '-i':
         local_in = (argv[3]=='True' or argv[3]=='true' or argv[3] == 'T' or argv[3] == 't')
-        visualize_intermediate_traj(argv[2], local_in, argv[4])
+        if len(argv) == 5:
+            visualize_intermediate_traj(argv[2], local_in, argv[4])
+        elif len(argv) == 6:
+            visualize_intermediate_traj(argv[2], local_in, t_max=argv[4], soln_folder=argv[5])
     elif argv[1] == '-c':
         local_in1 = (argv[3]=='True' or argv[3]=='true' or argv[3] == 'T' or argv[3] == 't')
         local_in2 = (argv[6]=='True' or argv[6]=='true' or argv[6] == 'T' or argv[6] == 't')
