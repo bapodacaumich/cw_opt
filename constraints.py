@@ -62,7 +62,7 @@ def max_dot_product(n, p, x, n_normals):
     # if max dot product value is above zero, then constraint is met (only one needs to be greater)
     return mmax(dots)
 
-def enforce_station_convex_hull(opti, K, IPs, T, obs, min_station_distance=0, nT=3):
+def enforce_station_convex_hull(opti, K, IPs, T, obs, min_station_distance=0, nT=2):
     """enforce convex hull for the station obstacle given knot points, intermediate points, and minimum station proximity
 
     Args:
