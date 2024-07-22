@@ -227,6 +227,47 @@ def load_knots(distance, local=False):
     # load and return knot points
     return np.loadtxt(knotfile, delimiter=',') # (N, 6)
 
+def get_path(T, knots, n_drift):
+    """get full path from drift periods and knot points
+
+    Args:
+        T (np.array(n_drift_periods)): array of drift periods
+        knots (np.ndarray(n_knots, 3)): list of manuevering points (IPs and knots)
+        n_drift (int): number of interpolated points in a drift period
+
+    Returns:
+        full_path (np.ndarray(n_drift*n_subtraj, 3)): full path of interpolated drift points
+    """
+    n_subtraj = knots.shape[0]-1
+    full_path = np.zeros((n_drift*n_subtraj, 3))
+    for i in range(n_subtraj):
+        last_knot = knots[i]
+        next_knot = knots[i+1]
+        cur_T = T[i]
+        v0 = cw_v_init(last_knot, next_knot, cur_T)
+        drift = np.linspace(0, cur_T, n_drift)
+        for sub_i, t in enumerate(drift):
+            x, y, z = cw_pose(last_knot, v0, t)
+            full_path[i*n_drift + sub_i,:] = np.array([x, y, z])
+
+    return full_path
+
+def dv_to_cost(dv, m=5, Isp=80, g0=9.81):
+    """compute fuel cost from delta-v
+
+    Args:
+        dv (float): delta-v in m/s
+        m (int, optional): dry mass of space robot. Defaults to 5.
+        Isp (int, optional): specific impulse of space robot 6 dof thrusters. Defaults to 80.
+        g0 (float, optional): acceleration due to gravity. Defaults to 9.81.
+
+    Returns:
+        cost (float): fuel cost in g
+    """
+    m0 = m * np.exp(dv/(Isp*g0))
+    cost = (m0 - m) * 1000
+    return cost
+
 def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
     """plot path from list of drift periods
 
@@ -241,6 +282,13 @@ def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
     else:
         knotpoints = load_knots(distance, local)[:,:3]
         knots = []
+
+        # alternate knot points and intermediate points (in correct order)
+
+        dv = compute_path_cost_intermediate(T, knotpoints, X, square=False)
+        fuel_cost = dv_to_cost(dv)
+        print('Fuel Cost = ', fuel_cost)
+
         for i in range(X.shape[0]):
             knots.append(knotpoints[i,:])
             knots.append(X[i,:])
@@ -254,24 +302,8 @@ def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
         hold = False
     else:
         hold = True
-        
-    
-    # plot knot points
-    # axes.plot(knots[:,0], knots[:,1], knots[:,2],'k--')
-    # axes.scatter(knots[:,0], knots[:,1], knots[:,2], 'rx')
 
-    # plot subtrajectories
-    n_subtraj = knots.shape[0]-1
-    full_path = np.zeros((n_drift*n_subtraj, 3))
-    for i in range(n_subtraj):
-        last_knot = knots[i]
-        next_knot = knots[i+1]
-        cur_T = T[i]
-        v0 = cw_v_init(last_knot, next_knot, cur_T)
-        drift = np.linspace(0, cur_T, n_drift)
-        for sub_i, t in enumerate(drift):
-            x, y, z = cw_pose(last_knot, v0, t)
-            full_path[i*n_drift + sub_i,:] = np.array([x, y, z])
+    full_path = get_path(T, knots, n_drift)
 
     if hold: 
         knot_color = 'tab:green'
@@ -287,7 +319,7 @@ def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
         intermediate_label = 'Intermediate Points'
     axes.scatter(knotpoints[:,0], knotpoints[:,1], knotpoints[:,2], c=knot_color, marker='o', lw=5, label=knot_label)
     axes.scatter(X[:,0], X[:,1], X[:,2], c=intermediate_color, marker='x', lw=5, label=intermediate_label)
-    axes.plot(full_path[:,0], full_path[:,1], full_path[:,2], 'k', label='')
+    axes.plot(full_path[:,0], full_path[:,1], full_path[:,2], c=path_color, label='')
     axes.plot([full_path[0,0], full_path[-1,0]], [full_path[0,1], full_path[-1,1]], [full_path[0,2], full_path[-1,2]], 'rx', label='')
     xmin = np.min(full_path[:,0])
     xmax = np.max(full_path[:,0])
