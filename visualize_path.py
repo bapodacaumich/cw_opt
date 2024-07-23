@@ -10,8 +10,9 @@ def visualize_traj(dist, local, t_max, soln_folder='intermediate'):
     locality=''
     if local: locality='_local'
 
-    soln_dir = os.path.join(os.getcwd(), soln_folder)
-    query_string = 'T_' + str(dist) + 'm' + locality + '_' + str(t_max)
+    soln_dir = os.path.join(os.getcwd(), 'solns', soln_folder)
+    print('soln_dir: ', soln_dir)
+    query_string = str(dist) + 'm' + locality + '_' + str(t_max) + '_t'
     q_len = len(query_string)
     for file in os.listdir(soln_dir):
         if file[:q_len] == query_string:
@@ -84,5 +85,8 @@ if __name__ == '__main__':
         local_in2 = (argv[6]=='True' or argv[6]=='true' or argv[6] == 'T' or argv[6] == 't')
         visualize_intermediate_traj_compare(argv[2], local_in1, argv[4], argv[5], local_in2, argv[7])
     else:
+        dist_in = float(argv[1])
         local_in = (argv[2]=='True' or argv[2]=='true' or argv[2] == 'T' or argv[2] == 't')
-        visualize_traj(float(argv[1]), local_in, float(argv[3]))
+        t_max_in = float(argv[3])
+        soln_folder_in = argv[4]
+        visualize_traj(dist_in, local_in, t_max_in, soln_folder=soln_folder_in)

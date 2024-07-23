@@ -1,13 +1,13 @@
 # clohessy wiltshire intermediate point method
 from casadi import *
 import numpy as np
-from utils import compute_path_cost, load_station_mesh
+from utils import compute_path_cost_intermediate, load_station_mesh, debug_save_vars_intermediate, get_initial_intermediate
 import os
 from sys import argv
-from constraints import enforce_station_convex_hull
+from constraints import enforce_station_convex_hull_IP
 from time import perf_counter
 
-def ocp_obs(knot_points, T_max=36000.0, debug=False):
+def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
     """set up and solve optimal control problem for drift trajectories with obstacles using intermediate points
 
     Args:
@@ -19,18 +19,21 @@ def ocp_obs(knot_points, T_max=36000.0, debug=False):
     """
 
     n_knots = knot_points.shape[0]
+    n_intermediate = n_knots-1
     opti = Opti()
 
     # time intervals for each traj between knot points
-    n_drift = n_knots - 1 # drift periods between each knot and intermediate point
+    n_drift = (n_knots + n_intermediate) - 1 # drift periods between each knot and intermediate point
     print('Number of drift periods: ', n_drift)
     T = opti.variable(n_drift,1)    # drift periods between each knot and intermediate point
+    # T = np.ones((n_drift,1))*T_max/n_drift # drift periods between each knot and intermediate point -- trying with constant drift periods
+    X = opti.variable(n_knots-1,3)      # one less intermediate point than knot points (between each pair of knot points)
 
     # constrain path to maintain keepout region
     obs = load_station_mesh()
     print('Enforcing station convex hull...')
     tstart = perf_counter()
-    enforce_station_convex_hull(opti, knot_points, T, obs)
+    enforce_station_convex_hull_IP(opti, knot_points, X, T, obs)
     print('Done!')
     print('Time elapsed: ', perf_counter()-tstart, 's')
 
@@ -39,7 +42,7 @@ def ocp_obs(knot_points, T_max=36000.0, debug=False):
     opti.subject_to(T > 0)
 
     # compute path cost
-    dv_tot = compute_path_cost(T, knot_points, square=True)
+    dv_tot = compute_path_cost_intermediate(T, knot_points, intermediate_points=X, square=True)
 
     # minimize total delta-v
     opti.minimize(dv_tot)
@@ -48,17 +51,29 @@ def ocp_obs(knot_points, T_max=36000.0, debug=False):
     Tinit = DM.ones(n_drift,1)*T_max/n_drift/2
     opti.set_initial(T, Tinit)
 
-    # # debugger
-    # if debug:
-        # print('Debug Mode On')
-        # run_num=0
-        # for file in os.listdir(os.path.join(os.getcwd(), 'debug')):
-            # if 'run' in file:
-                # run_num +=1
-        # debug_dir = os.path.join(os.getcwd(), 'debug', 'run'+str(run_num))
-        # opti.callback(lambda i: debug_save_vars_intermediate(opti, T, dv_tot, debug_dir, i))
+    # warm start with reasonable values -- middle of drift trajectory
+    IPinit = get_initial_intermediate(Tinit, knot_points)
+    # IPinit = get_initial_intermediate(T, knot_points)
+    opti.set_initial(X, IPinit)
 
-        # print('Debug run: ', run_num)
+    # # set initial intermediate points to next knot point
+    # opti.set_initial(X, knot_points[1:,:])
+
+    # debug print solution
+    # print('test:')
+    # print(compute_path_cost_intermediate(DM.ones((n_knots-1)*2,1), knot_points, intermediate_points=knot_points[1:,:]))
+
+    # debugger
+    if debug:
+        print('Debug Mode On')
+        run_num=0
+        for file in os.listdir(os.path.join(os.getcwd(), 'debug')):
+            if 'run' in file:
+                run_num +=1
+        debug_dir = os.path.join(os.getcwd(), 'debug', 'run'+str(run_num))
+        opti.callback(lambda i: debug_save_vars_intermediate(opti, T, dv_tot, X, debug_dir, i))
+
+        print('Debug run: ', run_num)
 
     ## solver
     opts = {'ipopt.print_level': 0, 'print_time': 0, 'ipopt.tol': 1e-3, 'ipopt.max_iter':5000, 'ipopt.print_level': 7}
@@ -66,11 +81,13 @@ def ocp_obs(knot_points, T_max=36000.0, debug=False):
     try: sol = opti.solve()
     except RuntimeError:
         print('RUNTIME ERROR, will save non-converged values anyways')
-        return opti.debug.value(T)
+        return opti.debug.value(T), opti.debug.value(X)
+        # return T, opti.debug.value(X)
 
-    return sol.value(T)
+    return sol.value(T), sol.value(X)
+    # return T, sol.value(X)
 
-def ocp_wrapper_obs(view_distance, local, save_dir='obs', T_max=1000.0, debug=False):
+def ocp_wrapper_intermediate(view_distance, local, save_dir='intermediate', T_max=1000.0, debug=False):
 
     for file in os.listdir(os.path.join(os.getcwd(), 'ccp_paths')):
         if str(view_distance) == file[:4]:
@@ -85,12 +102,13 @@ def ocp_wrapper_obs(view_distance, local, save_dir='obs', T_max=1000.0, debug=Fa
     
     if not os.path.exists(save_folder): os.mkdir(save_folder)
 
-    sol_t = ocp_obs(knot_points, T_max=T_max, debug=debug)
+    sol_t, sol_x = ocp_intermediate(knot_points, T_max=T_max, debug=debug)
 
     locality = ''
     if local:
         locality = '_local'
 
+    np.savetxt(os.path.join(save_folder, view_distance + locality + '_' + str(T_max) + '_x.csv'), sol_x, delimiter=",")
     np.savetxt(os.path.join(save_folder, view_distance + locality + '_' + str(T_max) + '_t.csv'), sol_t, delimiter=",")
 
 if __name__ == "__main__":
@@ -100,7 +118,7 @@ if __name__ == "__main__":
     elif len(argv) == 3:
         print('Debug Mode Activated!')
         local_in = (argv[2]=='True' or argv[2]=='true' or argv[2] == 'T' or argv[2] == 't')
-        ocp_wrapper_obs(argv[1], local_in, debug=True)
+        ocp_wrapper_intermediate(argv[1], local_in, debug=True)
     else:
         local_in = (argv[2]=='True' or argv[2]=='true' or argv[2] == 'T' or argv[2] == 't')
-        ocp_wrapper_obs(argv[1], local_in, save_dir=argv[3], T_max=float(argv[4]))
+        ocp_wrapper_intermediate(argv[1], local_in, save_dir=argv[3], T_max=float(argv[4]))

@@ -62,7 +62,41 @@ def max_dot_product(n, p, x, n_normals):
     # if max dot product value is above zero, then constraint is met (only one needs to be greater)
     return mmax(dots)
 
-def enforce_station_convex_hull(opti, K, IPs, T, obs, min_station_distance=0, nT=2):
+def enforce_station_convex_hull(opti, K, T, obs, min_station_distance=0, nT=2):
+    """enforce convex hull for the station obstacle given knot points, intermediate points, and minimum station proximity
+
+    Args:
+        opti (Opti): opti stack object for ocp
+        K (np.array(N,3)): knot points
+        T (MX): time intervals for each trajectory between knot points
+        obs (list): list of tuples containing normals and points for each face of the station
+        min_station_distance (float): minimum distance of state vector configurations from the convex hull being enforced
+        nT (int, optional): number of interpolated points along each drift arc
+    """
+    # points to enforce with convex hull
+    X = []
+
+    n_knots = K.shape[0]
+    for i in range(n_knots-1):
+        # get knot points via starts and ends
+        start = K[i,:]
+        end = K[i+1,:]
+
+        # get time periods
+        ts = T[i]
+
+        # get path discretization
+        dt = ts/(nT+1)
+        v0 = cw_v_init(start, end, ts)
+        for j in range(nT):
+            X.append(cw_pose(start, v0, dt*(j+1)))
+
+    for oi, o in enumerate(obs):
+        normals, points = o
+        print(f'Enforcing {len(X)} timesteps for Obstacle {oi+1}/{len(obs)}...')
+        enforce_convex_hull_from_points(normals, points, opti, X, min_station_distance)
+
+def enforce_station_convex_hull_IP(opti, K, IPs, T, obs, min_station_distance=0, nT=2):
     """enforce convex hull for the station obstacle given knot points, intermediate points, and minimum station proximity
 
     Args:
@@ -79,7 +113,7 @@ def enforce_station_convex_hull(opti, K, IPs, T, obs, min_station_distance=0, nT
     X = []
     X.extend([IPs[i,:] for i in range(nIP)])
 
-    n_knots = K.shape[0]-1
+    n_knots = K.shape[0]
     for i in range(n_knots-1):
         # get knot points via starts and ends
         starts = [K[i,:], IPs[i,:]]

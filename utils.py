@@ -278,7 +278,9 @@ def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
         local (bool, optional): if path uses local tsp formulation. Defaults to False.
     """
     # load knot points
-    if X is None: knots = load_knots(distance, local)[:,:3]
+    if X is None:
+        knotpoints = load_knots(distance, local)[:,:3]
+        knots = knotpoints
     else:
         knotpoints = load_knots(distance, local)[:,:3]
         knots = []
@@ -318,9 +320,17 @@ def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
         intermediate_color = 'tab:purple'
         intermediate_label = 'Intermediate Points'
     axes.scatter(knotpoints[:,0], knotpoints[:,1], knotpoints[:,2], c=knot_color, marker='o', lw=5, label=knot_label)
-    axes.scatter(X[:,0], X[:,1], X[:,2], c=intermediate_color, marker='x', lw=5, label=intermediate_label)
+
+    # plot intermediate points
+    if X is not None: axes.scatter(X[:,0], X[:,1], X[:,2], c=intermediate_color, marker='x', lw=5, label=intermediate_label)
+
+    # plot interpolated path
     axes.plot(full_path[:,0], full_path[:,1], full_path[:,2], c=path_color, label='')
+
+    # mark start and end points
     axes.plot([full_path[0,0], full_path[-1,0]], [full_path[0,1], full_path[-1,1]], [full_path[0,2], full_path[-1,2]], 'rx', label='')
+
+    # set aspect ratio equal
     xmin = np.min(full_path[:,0])
     xmax = np.max(full_path[:,0])
     ymin = np.min(full_path[:,1])
