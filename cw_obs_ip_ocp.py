@@ -63,6 +63,9 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
     # print('test:')
     # print(compute_path_cost_intermediate(DM.ones((n_knots-1)*2,1), knot_points, intermediate_points=knot_points[1:,:]))
 
+    # make sure Tsum is less than tmax
+    opti.callback(lambda i: print('Tsum: ', sum1(sum2(T)).value, ' Tmax: ', T_max))
+
     # debugger
     if debug:
         print('Debug Mode On')
