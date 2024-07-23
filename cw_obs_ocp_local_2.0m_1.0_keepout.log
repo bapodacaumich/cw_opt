@@ -44092,3 +44092,515 @@ residual_ratio = 1.371705e-15
 Calling MUMPS-3 for solve.
 Done with MUMPS-3 for solve.
 Factorization successful.
+max-norm resid_x  5.587935e-09
+max-norm resid_s  2.273737e-13
+max-norm resid_c  0.000000e+00
+max-norm resid_d  1.387779e-17
+max-norm resid_zL 2.081668e-17
+max-norm resid_zU 0.000000e+00
+max-norm resid_vL 8.673617e-19
+max-norm resid_vU 2.646978e-23
+nrm_rhs = 5.43e+06 nrm_sol = 2.71e+03 nrm_resid = 5.59e-09
+residual_ratio = 1.028778e-15
+
+**************************************************
+*** Finding Acceptable Trial Point for Iteration 268:
+**************************************************
+
+--> Starting line search in iteration 268 <--
+Acceptable Check:
+  overall_error =  1.0776741933505873e+06   acceptable_tol_             =  9.9999999999999995e-07
+  dual_inf      =  5.4289077095902637e+06   acceptable_dual_inf_tol_    =  1.0000000000000000e+10
+  constr_viol   =  1.5166418265766257e-05   acceptable_constr_viol_tol_ =  1.0000000000000000e-02
+  compl_inf     =  1.6448245571924444e-01   acceptable_compl_inf_tol_   =  1.0000000000000000e-02
+  curr_obj_val_ =  7.2639981790555912e+03   last_obj_val                =  7.2652954371393744e+03
+  std::abs(curr_obj_val_-last_obj_val_)/Max(1., std::abs(curr_obj_val_)) =  1.7858733603810215e-04 acceptable_obj_change_tol_ =  1.0000000000000000e+20
+The current filter has 8 entries.
+Relative step size for delta_x = 1.706765e-02
+minimal step size ALPHA_MIN = 5.000000E-07
+Starting checks for alpha (primal) = 7.39e-01
+Checking acceptability for trial step size alpha_primal_test= 7.385284e-01:
+  New values of barrier function     =  7.7763013883465592e+03  (reference  7.7643766092981277e+03):
+  New values of constraint violation =  2.7064328957895221e+01  (reference  4.7034089232715210e+00):
+reference_theta = 4.703409e+00 reference_gradBarrTDelta = 1.089065e+01
+Checking sufficient reduction...
+Failed...
+Trying second order correction number 1
+Calling MUMPS-3 for solve.
+Done with MUMPS-3 for solve.
+Factorization successful.
+max-norm resid_x  8.102506e-08
+max-norm resid_s  1.455192e-11
+max-norm resid_c  0.000000e+00
+max-norm resid_d  2.542411e-14
+max-norm resid_zL 1.387779e-17
+max-norm resid_zU 0.000000e+00
+max-norm resid_vL 1.734723e-18
+max-norm resid_vU 9.860761e-32
+Checking acceptability for trial step size alpha_primal_test= 7.385284e-01:
+  New values of barrier function     =  7.7623091233010182e+03  (reference  7.7643766092981277e+03):
+  New values of constraint violation =  8.1250437417922914e+00  (reference  4.7034089232715210e+00):
+reference_theta = 4.703409e+00 reference_gradBarrTDelta = 1.089065e+01
+Checking sufficient reduction...
+Succeeded...
+Checking filter acceptability...
+Failed...
+Trying second order correction number 2
+Calling MUMPS-3 for solve.
+Done with MUMPS-3 for solve.
+Factorization successful.
+max-norm resid_x  5.587935e-09
+max-norm resid_s  9.094947e-13
+max-norm resid_c  0.000000e+00
+max-norm resid_d  1.443290e-15
+max-norm resid_zL 1.084202e-19
+max-norm resid_zU 0.000000e+00
+max-norm resid_vL 6.776264e-21
+max-norm resid_vU 1.033976e-25
+Checking acceptability for trial step size alpha_primal_test= 7.385284e-01:
+  New values of barrier function     =  7.7748416621294218e+03  (reference  7.7643766092981277e+03):
+  New values of constraint violation =  1.9558887935404194e+01  (reference  4.7034089232715210e+00):
+reference_theta = 4.703409e+00 reference_gradBarrTDelta = 1.089065e+01
+Checking sufficient reduction...
+Failed...
+Starting checks for alpha (primal) = 3.69e-01
+Checking acceptability for trial step size alpha_primal_test= 3.692642e-01:
+  New values of barrier function     =  7.7702949474071565e+03  (reference  7.7643766092981277e+03):
+  New values of constraint violation =  1.0458472397312260e+01  (reference  4.7034089232715210e+00):
+reference_theta = 4.703409e+00 reference_gradBarrTDelta = 1.089065e+01
+Checking sufficient reduction...
+Failed...
+Starting checks for alpha (primal) = 1.85e-01
+Checking acceptability for trial step size alpha_primal_test= 1.846321e-01:
+  New values of barrier function     =  7.7673148172965221e+03  (reference  7.7643766092981277e+03):
+  New values of constraint violation =  2.7946467218416804e+00  (reference  4.7034089232715210e+00):
+reference_theta = 4.703409e+00 reference_gradBarrTDelta = 1.089065e+01
+Checking sufficient reduction...
+Succeeded...
+Checking filter acceptability...
+Succeeded...
+reference_theta = 4.703409e+00 reference_gradBarrTDelta = 1.089065e+01
+orig_curr_theta = 9.41e+00, orig_trial_theta = 9.75e+00
+orig_curr_inf_pr = 5.85e-01, orig_trial_inf_pr = 5.87e-01
+Point does not provide sufficient reduction w.r.t the original constraint violation (orig_inf_pr_max=5.263386e-01).
+Checking convergence for restoration phase problem...
+Convergence Check:
+  overall_error =  1.2862449725184801e+05   IpData().tol()   =  1.0000000000000000e-03
+  dual_inf      =  6.4806597046259081e+05   dual_inf_tol_    =  1.0000000000000000e+00
+  constr_viol   =  3.0336817901771340e-02   constr_viol_tol_ =  1.0000000000000000e-04
+  compl_inf     =  1.3183643666511830e-01   compl_inf_tol_   =  1.0000000000000000e-04
+Acceptable Check:
+  overall_error =  1.2862449725184801e+05   acceptable_tol_             =  9.9999999999999995e-07
+  dual_inf      =  6.4806597046259081e+05   acceptable_dual_inf_tol_    =  1.0000000000000000e+10
+  constr_viol   =  3.0336817901771340e-02   acceptable_constr_viol_tol_ =  1.0000000000000000e-02
+  compl_inf     =  1.3183643666511830e-01   acceptable_compl_inf_tol_   =  1.0000000000000000e-02
+  curr_obj_val_ =  7.2669751309304183e+03   last_obj_val                =  7.2639981790555912e+03
+  std::abs(curr_obj_val_-last_obj_val_)/Max(1., std::abs(curr_obj_val_)) =  4.0965488682579077e-04 acceptable_obj_change_tol_ =  1.0000000000000000e+20
+
+**************************************************
+*** Update HessianMatrix for Iteration 269:
+**************************************************
+
+
+
+**************************************************
+*** Summary of Iteration 269 for original NLP:
+**************************************************
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 269r 1.6266180e+11 5.87e-01 6.48e+05  -2.4 2.57e-02   5.0 1.11e-01 1.85e-01h  3 
+
+**************************************************
+*** Beginning Iteration 269 from the following point:
+**************************************************
+
+Primal infeasibility for restoration phase problem = 7.6816424901959390e-02
+Dual infeasibility for restoration phase problem   = 6.4806597046259081e+05
+||curr_x||_inf   = 5.9999769817045808e+02
+||curr_s||_inf   = 5.9999769817102833e+02
+||curr_y_c||_inf = 0.0000000000000000e+00
+||curr_y_d||_inf = 1.0203001857914462e+03
+||curr_z_L||_inf = 2.3468552821880094e+03
+||curr_z_U||_inf = 0.0000000000000000e+00
+||curr_v_L||_inf = 1.0006802198523721e+03
+||curr_v_U||_inf = 1.5499702478002106e+00
+
+||delta_x||_inf   = 1.7068103504607617e-02
+||delta_s||_inf   = 2.5682707522086363e-02
+||delta_y_c||_inf = 0.0000000000000000e+00
+||delta_y_d||_inf = 2.7139134304630093e+03
+||delta_z_L||_inf = 1.6020799530182271e+03
+||delta_z_U||_inf = 0.0000000000000000e+00
+||delta_v_L||_inf = 4.0682678957748982e+02
+||delta_v_U||_inf = 1.0213606751273595e-04
+
+
+***Current NLP Values for Iteration (Restoration phase problem) 269:
+
+                                   (scaled)                 (unscaled)
+Objective...............:   7.2669751309304183e+03    7.2669751309304183e+03
+Dual infeasibility......:   6.4806597046259081e+05    6.4806597046259081e+05
+Constraint violation....:   3.0336817901771340e-02    3.0336817901771340e-02
+Complementarity.........:   1.3183643666511830e-01    1.3183643666511830e-01
+Overall NLP error.......:   1.2862449725184801e+05    6.4806597046259081e+05
+
+
+
+
+**************************************************
+*** Update Barrier Parameter for Iteration 269:
+**************************************************
+
+Optimality Error for Barrier Sub-problem = 1.286245e+05
+Barrier Parameter: 3.577866e-03
+
+**************************************************
+*** Solving the Primal Dual System for Iteration 269:
+**************************************************
+
+Solving system with delta_x=0.000000e+00 delta_s=0.000000e+00
+                    delta_c=0.000000e+00 delta_d=0.000000e+00
+Calling MUMPS-2 for numerical factorization.
+Done with MUMPS-2 for numerical factorization.
+Number of doubles for MUMPS to hold factorization (INFO(9)) = 35349
+Number of integers for MUMPS to hold factorization (INFO(10)) = 151610
+In MumpsSolverInterface::Factorization: negevals_ = 5778, but numberOfNegEVals = 5776
+Factorization failed with retval = 2
+Solving system with delta_x=3.377311e+04 delta_s=3.377311e+04
+                    delta_c=0.000000e+00 delta_d=0.000000e+00
+Calling MUMPS-2 for numerical factorization.
+Done with MUMPS-2 for numerical factorization.
+Number of doubles for MUMPS to hold factorization (INFO(9)) = 65196
+Number of integers for MUMPS to hold factorization (INFO(10)) = 171728
+Calling MUMPS-3 for solve.
+Done with MUMPS-3 for solve.
+Factorization successful.
+Number of trial factorizations performed: 2
+Perturbation parameters: delta_x=3.377311e+04 delta_s=3.377311e+04
+                         delta_c=0.000000e+00 delta_d=0.000000e+00
+max-norm resid_x  6.984919e-10
+max-norm resid_s  2.273737e-13
+max-norm resid_c  0.000000e+00
+max-norm resid_d  1.873501e-16
+max-norm resid_zL 8.673617e-19
+max-norm resid_zU 0.000000e+00
+max-norm resid_vL 1.734723e-18
+max-norm resid_vU 1.009742e-28
+nrm_rhs = 6.48e+05 nrm_sol = 1.71e+03 nrm_resid = 6.98e-10
+residual_ratio = 1.074979e-15
+Calling MUMPS-3 for solve.
+Done with MUMPS-3 for solve.
+Factorization successful.
+max-norm resid_x  3.492460e-10
+max-norm resid_s  2.273737e-13
+max-norm resid_c  0.000000e+00
+max-norm resid_d  1.387779e-17
+max-norm resid_zL 3.469447e-18
+max-norm resid_zU 0.000000e+00
+max-norm resid_vL 1.734723e-18
+max-norm resid_vU 4.135903e-25
+nrm_rhs = 6.48e+05 nrm_sol = 1.71e+03 nrm_resid = 3.49e-10
+residual_ratio = 5.374897e-16
+
+**************************************************
+*** Finding Acceptable Trial Point for Iteration 269:
+**************************************************
+
+--> Starting line search in iteration 269 <--
+Acceptable Check:
+  overall_error =  1.2862449725184801e+05   acceptable_tol_             =  9.9999999999999995e-07
+  dual_inf      =  6.4806597046259081e+05   acceptable_dual_inf_tol_    =  1.0000000000000000e+10
+  constr_viol   =  3.0336817901771340e-02   acceptable_constr_viol_tol_ =  1.0000000000000000e-02
+  compl_inf     =  1.3183643666511830e-01   acceptable_compl_inf_tol_   =  1.0000000000000000e-02
+  curr_obj_val_ =  7.2669751309304183e+03   last_obj_val                =  7.2639981790555912e+03
+  std::abs(curr_obj_val_-last_obj_val_)/Max(1., std::abs(curr_obj_val_)) =  4.0965488682579077e-04 acceptable_obj_change_tol_ =  1.0000000000000000e+20
+The current filter has 8 entries.
+Relative step size for delta_x = 1.018142e-02
+minimal step size ALPHA_MIN = 5.000000E-07
+Starting checks for alpha (primal) = 3.77e-01
+Checking acceptability for trial step size alpha_primal_test= 3.770671e-01:
+  New values of barrier function     =  7.7693607554940763e+03  (reference  7.7673148172965221e+03):
+  New values of constraint violation =  1.5417352375015392e+00  (reference  2.7946467218416804e+00):
+reference_theta = 2.794647e+00 reference_gradBarrTDelta = 4.598420e+00
+Checking sufficient reduction...
+Succeeded...
+Checking filter acceptability...
+Succeeded...
+reference_theta = 2.794647e+00 reference_gradBarrTDelta = 4.598420e+00
+orig_curr_theta = 9.41e+00, orig_trial_theta = 8.36e+00
+orig_curr_inf_pr = 5.85e-01, orig_trial_inf_pr = 5.87e-01
+Point does not provide sufficient reduction w.r.t the original constraint violation (orig_inf_pr_max=5.263386e-01).
+Checking convergence for restoration phase problem...
+Convergence Check:
+  overall_error =  1.0887080439828844e+06   IpData().tol()   =  1.0000000000000000e-03
+  dual_inf      =  5.4859935568135008e+06   dual_inf_tol_    =  1.0000000000000000e+00
+  constr_viol   =  0.0000000000000000e+00   constr_viol_tol_ =  1.0000000000000000e-04
+  compl_inf     =  1.6253526780052563e-01   compl_inf_tol_   =  1.0000000000000000e-04
+Acceptable Check:
+  overall_error =  1.0887080439828844e+06   acceptable_tol_             =  9.9999999999999995e-07
+  dual_inf      =  5.4859935568135008e+06   acceptable_dual_inf_tol_    =  1.0000000000000000e+10
+  constr_viol   =  0.0000000000000000e+00   acceptable_constr_viol_tol_ =  1.0000000000000000e-02
+  compl_inf     =  1.6253526780052563e-01   acceptable_compl_inf_tol_   =  1.0000000000000000e-02
+  curr_obj_val_ =  7.2690017763884489e+03   last_obj_val                =  7.2669751309304183e+03
+  std::abs(curr_obj_val_-last_obj_val_)/Max(1., std::abs(curr_obj_val_)) =  2.7880657074725158e-04 acceptable_obj_change_tol_ =  1.0000000000000000e+20
+
+**************************************************
+*** Update HessianMatrix for Iteration 270:
+**************************************************
+
+
+
+**************************************************
+*** Summary of Iteration 270 for original NLP:
+**************************************************
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 270r 8.7294850e+10 5.87e-01 5.49e+06  -2.4 3.65e-02   4.5 6.62e-01 3.77e-01h  1 
+
+**************************************************
+*** Beginning Iteration 270 from the following point:
+**************************************************
+
+Primal infeasibility for restoration phase problem = 4.6404932720084169e-02
+Dual infeasibility for restoration phase problem   = 5.4859935568135008e+06
+||curr_x||_inf   = 5.9999769728660374e+02
+||curr_s||_inf   = 5.9999769728717251e+02
+||curr_y_c||_inf = 0.0000000000000000e+00
+||curr_y_d||_inf = 1.1329878449928492e+03
+||curr_z_L||_inf = 2.2471439079968163e+03
+||curr_z_U||_inf = 0.0000000000000000e+00
+||curr_v_L||_inf = 1.2471237217424230e+03
+||curr_v_U||_inf = 1.5491530219037650e+00
+
+||delta_x||_inf   = 1.1814462657576293e-02
+||delta_s||_inf   = 3.6456022228833915e-02
+||delta_y_c||_inf = 0.0000000000000000e+00
+||delta_y_d||_inf = 1.3539931963464828e+03
+||delta_z_L||_inf = 1.7063963486177063e+03
+||delta_z_U||_inf = 0.0000000000000000e+00
+||delta_v_L||_inf = 5.2596254774802128e+02
+||delta_v_U||_inf = 1.2351152015911970e-03
+
+
+***Current NLP Values for Iteration (Restoration phase problem) 270:
+
+                                   (scaled)                 (unscaled)
+Objective...............:   7.2690017763884489e+03    7.2690017763884489e+03
+Dual infeasibility......:   5.4859935568135008e+06    5.4859935568135008e+06
+Constraint violation....:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   1.6253526780052563e-01    1.6253526780052563e-01
+Overall NLP error.......:   1.0887080439828844e+06    5.4859935568135008e+06
+
+
+
+
+**************************************************
+*** Update Barrier Parameter for Iteration 270:
+**************************************************
+
+Optimality Error for Barrier Sub-problem = 1.088708e+06
+Barrier Parameter: 3.577866e-03
+
+**************************************************
+*** Solving the Primal Dual System for Iteration 270:
+**************************************************
+
+Solving system with delta_x=0.000000e+00 delta_s=0.000000e+00
+                    delta_c=0.000000e+00 delta_d=0.000000e+00
+Calling MUMPS-2 for numerical factorization.
+Done with MUMPS-2 for numerical factorization.
+Number of doubles for MUMPS to hold factorization (INFO(9)) = 35349
+Number of integers for MUMPS to hold factorization (INFO(10)) = 151610
+In MumpsSolverInterface::Factorization: negevals_ = 5779, but numberOfNegEVals = 5776
+Factorization failed with retval = 2
+Solving system with delta_x=1.125770e+04 delta_s=1.125770e+04
+                    delta_c=0.000000e+00 delta_d=0.000000e+00
+Calling MUMPS-2 for numerical factorization.
+Done with MUMPS-2 for numerical factorization.
+Number of doubles for MUMPS to hold factorization (INFO(9)) = 61482
+Number of integers for MUMPS to hold factorization (INFO(10)) = 169488
+Calling MUMPS-3 for solve.
+Done with MUMPS-3 for solve.
+Factorization successful.
+Number of trial factorizations performed: 2
+Perturbation parameters: delta_x=1.125770e+04 delta_s=1.125770e+04
+                         delta_c=0.000000e+00 delta_d=0.000000e+00
+max-norm resid_x  7.450581e-09
+max-norm resid_s  1.136868e-13
+max-norm resid_c  0.000000e+00
+max-norm resid_d  3.608225e-16
+max-norm resid_zL 5.421011e-20
+max-norm resid_zU 0.000000e+00
+max-norm resid_vL 8.470329e-22
+max-norm resid_vU 2.067952e-25
+nrm_rhs = 5.49e+06 nrm_sol = 1.06e+03 nrm_resid = 7.45e-09
+residual_ratio = 1.357847e-15
+Calling MUMPS-3 for solve.
+Done with MUMPS-3 for solve.
+Factorization successful.
+max-norm resid_x  4.656613e-09
+max-norm resid_s  1.136868e-13
+max-norm resid_c  0.000000e+00
+max-norm resid_d  6.938894e-18
+max-norm resid_zL 4.336809e-19
+max-norm resid_zU 0.000000e+00
+max-norm resid_vL 4.336809e-19
+max-norm resid_vU 2.067952e-25
+nrm_rhs = 5.49e+06 nrm_sol = 1.06e+03 nrm_resid = 4.66e-09
+residual_ratio = 8.486541e-16
+
+**************************************************
+*** Finding Acceptable Trial Point for Iteration 270:
+**************************************************
+
+--> Starting line search in iteration 270 <--
+Acceptable Check:
+  overall_error =  1.0887080439828844e+06   acceptable_tol_             =  9.9999999999999995e-07
+  dual_inf      =  5.4859935568135008e+06   acceptable_dual_inf_tol_    =  1.0000000000000000e+10
+  constr_viol   =  0.0000000000000000e+00   acceptable_constr_viol_tol_ =  1.0000000000000000e-02
+  compl_inf     =  1.6253526780052563e-01   acceptable_compl_inf_tol_   =  1.0000000000000000e-02
+  curr_obj_val_ =  7.2690017763884489e+03   last_obj_val                =  7.2669751309304183e+03
+  std::abs(curr_obj_val_-last_obj_val_)/Max(1., std::abs(curr_obj_val_)) =  2.7880657074725158e-04 acceptable_obj_change_tol_ =  1.0000000000000000e+20
+The current filter has 9 entries.
+Relative step size for delta_x = 3.428865e-02
+minimal step size ALPHA_MIN = 9.068680E-12
+Starting checks for alpha (primal) = 2.22e-02
+Checking acceptability for trial step size alpha_primal_test= 2.220750e-02:
+  New values of barrier function     =  7.7674959599199483e+03  (reference  7.7693607554940763e+03):
+  New values of constraint violation =  1.0197397662988772e+00  (reference  1.5417352375015392e+00):
+reference_theta = 1.541735e+00 reference_gradBarrTDelta = -8.500328e+01
+Checking sufficient reduction...
+Succeeded...
+Checking filter acceptability...
+Succeeded...
+reference_theta = 1.541735e+00 reference_gradBarrTDelta = -8.500328e+01
+orig_curr_theta = 9.41e+00, orig_trial_theta = 7.89e+00
+orig_curr_inf_pr = 5.85e-01, orig_trial_inf_pr = 5.87e-01
+Point does not provide sufficient reduction w.r.t the original constraint violation (orig_inf_pr_max=5.263386e-01).
+Checking convergence for restoration phase problem...
+Convergence Check:
+  overall_error =  8.8152783549940179e+05   IpData().tol()   =  1.0000000000000000e-03
+  dual_inf      =  4.4415752515364783e+06   dual_inf_tol_    =  1.0000000000000000e+00
+  constr_viol   =  1.3387741604808934e-05   constr_viol_tol_ =  1.0000000000000000e-04
+  compl_inf     =  4.1513837575375584e-01   compl_inf_tol_   =  1.0000000000000000e-04
+Acceptable Check:
+  overall_error =  8.8152783549940179e+05   acceptable_tol_             =  9.9999999999999995e-07
+  dual_inf      =  4.4415752515364783e+06   acceptable_dual_inf_tol_    =  1.0000000000000000e+10
+  constr_viol   =  1.3387741604808934e-05   acceptable_constr_viol_tol_ =  1.0000000000000000e-02
+  compl_inf     =  4.1513837575375584e-01   acceptable_compl_inf_tol_   =  1.0000000000000000e-02
+  curr_obj_val_ =  7.2671199511823133e+03   last_obj_val                =  7.2690017763884489e+03
+  std::abs(curr_obj_val_-last_obj_val_)/Max(1., std::abs(curr_obj_val_)) =  2.5895061850869606e-04 acceptable_obj_change_tol_ =  1.0000000000000000e+20
+
+**************************************************
+*** Update HessianMatrix for Iteration 271:
+**************************************************
+
+
+
+**************************************************
+*** Summary of Iteration 271 for original NLP:
+**************************************************
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 271r 8.6493934e+10 5.87e-01 4.44e+06  -2.4 5.43e-02   4.1 1.00e+00 2.22e-02f  1 
+
+**************************************************
+*** Beginning Iteration 271 from the following point:
+**************************************************
+
+Primal infeasibility for restoration phase problem = 3.6468775842530832e-02
+Dual infeasibility for restoration phase problem   = 4.4415752515364783e+06
+||curr_x||_inf   = 5.9999769713284877e+02
+||curr_s||_inf   = 5.9999769713341732e+02
+||curr_y_c||_inf = 0.0000000000000000e+00
+||curr_y_d||_inf = 1.1281904458767485e+03
+||curr_z_L||_inf = 2.0000008673245068e+03
+||curr_z_U||_inf = 0.0000000000000000e+00
+||curr_v_L||_inf = 1.0000008659350129e+03
+||curr_v_U||_inf = 1.5450702018269420e+00
+
+||delta_x||_inf   = 3.4421674865783833e-02
+||delta_s||_inf   = 5.4284720781484073e-02
+||delta_y_c||_inf = 0.0000000000000000e+00
+||delta_y_d||_inf = 6.3942257436721127e+02
+||delta_z_L||_inf = 1.0629957780410691e+03
+||delta_z_U||_inf = 0.0000000000000000e+00
+||delta_v_L||_inf = 3.3015482519930998e+02
+||delta_v_U||_inf = 4.0828200768229924e-03
+
+
+***Current NLP Values for Iteration (Restoration phase problem) 271:
+
+                                   (scaled)                 (unscaled)
+Objective...............:   7.2671199511823133e+03    7.2671199511823133e+03
+Dual infeasibility......:   4.4415752515364783e+06    4.4415752515364783e+06
+Constraint violation....:   1.3387741604808934e-05    1.3387741604808934e-05
+Complementarity.........:   4.1513837575375584e-01    4.1513837575375584e-01
+Overall NLP error.......:   8.8152783549940179e+05    4.4415752515364783e+06
+
+
+
+
+**************************************************
+*** Update Barrier Parameter for Iteration 271:
+**************************************************
+
+Optimality Error for Barrier Sub-problem = 8.815278e+05
+Barrier Parameter: 3.577866e-03
+
+**************************************************
+*** Solving the Primal Dual System for Iteration 271:
+**************************************************
+
+Solving system with delta_x=0.000000e+00 delta_s=0.000000e+00
+                    delta_c=0.000000e+00 delta_d=0.000000e+00
+Calling MUMPS-2 for numerical factorization.
+Done with MUMPS-2 for numerical factorization.
+Number of doubles for MUMPS to hold factorization (INFO(9)) = 35072
+Number of integers for MUMPS to hold factorization (INFO(10)) = 151334
+In MumpsSolverInterface::Factorization: negevals_ = 5779, but numberOfNegEVals = 5776
+Factorization failed with retval = 2
+Solving system with delta_x=3.752568e+03 delta_s=3.752568e+03
+                    delta_c=0.000000e+00 delta_d=0.000000e+00
+Calling MUMPS-2 for numerical factorization.
+Done with MUMPS-2 for numerical factorization.
+Number of doubles for MUMPS to hold factorization (INFO(9)) = 58604
+Number of integers for MUMPS to hold factorization (INFO(10)) = 168080
+Calling MUMPS-3 for solve.
+Done with MUMPS-3 for solve.
+Factorization successful.
+Number of trial factorizations performed: 2
+Perturbation parameters: delta_x=3.752568e+03 delta_s=3.752568e+03
+                         delta_c=0.000000e+00 delta_d=0.000000e+00
+max-norm resid_x  9.313226e-10
+max-norm resid_s  5.684342e-14
+max-norm resid_c  0.000000e+00
+max-norm resid_d  2.777552e-14
+max-norm resid_zL 2.710505e-20
+max-norm resid_zU 0.000000e+00
+max-norm resid_vL 1.355253e-20
+max-norm resid_vU 3.155444e-30
+nrm_rhs = 4.44e+06 nrm_sol = 8.31e+02 nrm_resid = 9.31e-10
+residual_ratio = 2.096437e-16
+Calling MUMPS-3 for solve.
+Done with MUMPS-3 for solve.
+Factorization successful.
+max-norm resid_x  2.793968e-09
+max-norm resid_s  5.684342e-14
+max-norm resid_c  0.000000e+00
+max-norm resid_d  2.602085e-18
+max-norm resid_zL 3.469447e-18
+max-norm resid_zU 0.000000e+00
+max-norm resid_vL 5.421011e-20
+max-norm resid_vU 4.135903e-25
+nrm_rhs = 4.44e+06 nrm_sol = 8.31e+02 nrm_resid = 2.79e-09
+residual_ratio = 6.289311e-16
+
+**************************************************
+*** Finding Acceptable Trial Point for Iteration 271:
+**************************************************
+
+--> Starting line search in iteration 271 <--
+Acceptable Check:
+  overall_error =  8.8152783549940179e+05   acceptable_tol_             =  9.9999999999999995e-07
+  dual_inf      =  4.4415752515364783e+06   acceptable_dual_inf_tol_    =  1.0000000000000000e+10
