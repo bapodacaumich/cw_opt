@@ -45,19 +45,19 @@ def cw_pose(x0, v0, t, n=1.1288e-3):
     return xe, ye, ze
 
 def dv_to_fuel(dv, m=5, isp=80):
-    """_summary_
+    """convert delta-v to fuel cost in g
 
     Args:
         dv (float): delta-v in m/s
         m (float, optional): dry mass of spacecraft (kg). Defaults to 5.
         isp (float, optional): specific impulse of engine. Defaults to 80.
     Returns:
-        cost (float): fuel cost to make dv (kg)
+        cost (float): fuel cost to make dv (g)
     """
     g0 = 9.81 # standard gravity
     m0 = m * np.exp(dv/(isp*g0))
     cost = m0 - m
-    return cost
+    return cost * 1000
 
 def cw_v_end(start, v_init, t, n=1.1288e-3):
     """get end velocity of drift trajectory given start, initial velocity and time
@@ -253,22 +253,6 @@ def get_path(T, knots, n_drift):
 
     return full_path
 
-def dv_to_cost(dv, m=5, Isp=80, g0=9.81):
-    """compute fuel cost from delta-v
-
-    Args:
-        dv (float): delta-v in m/s
-        m (int, optional): dry mass of space robot. Defaults to 5.
-        Isp (int, optional): specific impulse of space robot 6 dof thrusters. Defaults to 80.
-        g0 (float, optional): acceleration due to gravity. Defaults to 9.81.
-
-    Returns:
-        cost (float): fuel cost in g
-    """
-    m0 = m * np.exp(dv/(Isp*g0))
-    cost = (m0 - m) * 1000
-    return cost
-
 def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
     """plot path from list of drift periods
 
@@ -284,8 +268,8 @@ def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
         knots = knotpoints
 
         dv = compute_path_cost(T, knotpoints, square=False)
-        fuel_cost = dv_to_cost(dv)
-        print('Fuel Cost = ', fuel_cost)
+        fuel_cost = dv_to_fuel(dv)
+        print('DV, Fuel = ', dv, fuel_cost)
 
     else:
         knotpoints = load_knots(distance, local)[:,:3]
@@ -294,8 +278,8 @@ def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
         # alternate knot points and intermediate points (in correct order)
 
         dv = compute_path_cost_intermediate(T, knotpoints, X, square=False)
-        fuel_cost = dv_to_cost(dv)
-        print('Fuel Cost = ', fuel_cost)
+        fuel_cost = dv_to_fuel(dv)
+        print('DV, Fuel = ', dv, fuel_cost)
 
         for i in range(X.shape[0]):
             knots.append(knotpoints[i,:])
@@ -375,10 +359,11 @@ def load_station_mesh():
 
     return obs
 
-def get_initial_intermediate(T, knots):
+def get_initial_intermediate(T, knots, use_numpy=False):
     # compute intermediate points halfway through each drift trajectory for initialization
     nIP = T.shape[0]//2
-    IPs = DM(nIP, 3)
+    if use_numpy: IPs = np.zeros((nIP, 3))
+    else: IPs = DM(nIP, 3)
     for i in range(nIP):
         t = T[i]
         last_knot = knots[i]

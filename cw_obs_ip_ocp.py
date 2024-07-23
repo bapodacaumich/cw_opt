@@ -38,7 +38,7 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
     print('Time elapsed: ', perf_counter()-tstart, 's')
 
     # # constrain time intervals above 0 and total below T_max
-    opti.subject_to(sum2(T) <= T_max)
+    opti.subject_to(sum1(sum2(T)) <= T_max)
     opti.subject_to(T > 0)
 
     # compute path cost
