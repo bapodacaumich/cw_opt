@@ -113,7 +113,8 @@ def compute_path_cost(T, knot_points, square=True):
         else: dv_tot += sqrt((last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2)
         vx_end, vy_end, vz_end = cw_v_end(last_knot, [vx, vy, vz], cur_T)
         last_v = [vx_end, vy_end, vz_end]
-
+    if square: dv_tot += (last_v[0])**2 + (last_v[1])**2 + (last_v[2])**2
+    else: dv_tot += sqrt((last_v[0])**2 + (last_v[1])**2 + (last_v[2])**2)
     return dv_tot
 
 def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=True):
