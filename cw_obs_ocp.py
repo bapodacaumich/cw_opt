@@ -48,6 +48,9 @@ def ocp_obs(knot_points, T_max=36000.0, debug=False):
     Tinit = DM.ones(n_drift,1)*T_max/n_drift/2
     opti.set_initial(T, Tinit)
 
+    # check total T with debugger
+    opti.callback(lambda i: print('Tsum: ', opti.debug.value(sum1(sum2(T))), ' Tmax: ', T_max))
+
     # # debugger
     # if debug:
         # print('Debug Mode On')
