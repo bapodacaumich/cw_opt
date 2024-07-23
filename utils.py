@@ -281,6 +281,11 @@ def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
     if X is None:
         knotpoints = load_knots(distance, local)[:,:3]
         knots = knotpoints
+
+        dv = compute_path_cost(T, knotpoints, square=False)
+        fuel_cost = dv_to_cost(dv)
+        print('Fuel Cost = ', fuel_cost)
+
     else:
         knotpoints = load_knots(distance, local)[:,:3]
         knots = []
