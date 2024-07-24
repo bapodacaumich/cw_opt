@@ -30,7 +30,7 @@ def visualize_intermediate_traj(dist='1.5m', local=True, t_max=36000.0, soln_fol
     else: filetxt = dist + '_' + str(t_max)
     T = np.loadtxt(os.path.join(os.getcwd(), 'solns', soln_folder, filetxt + '_t.csv'))
     X = np.loadtxt(os.path.join(os.getcwd(), 'solns', soln_folder, filetxt + '_x.csv'), delimiter=',')
-    axes = plot_path(T, X, distance=dist, local=local)
+    axes = plot_path(T, X, distance=dist, local=local, debug=False)
     axes = plot_station(axes)
     axes.set_axis_off()
     plt.show()

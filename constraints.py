@@ -96,7 +96,7 @@ def enforce_station_convex_hull(opti, K, T, obs, min_station_distance=0, nT=10):
         print(f'Enforcing {len(X)} timesteps for Obstacle {oi+1}/{len(obs)}...')
         enforce_convex_hull_from_points(normals, points, opti, X, min_station_distance)
 
-def enforce_station_convex_hull_IP(opti, K, IPs, T, obs, min_station_distance=0, nT=2):
+def enforce_station_convex_hull_IP(opti, K, IPs, T, obs, min_station_distance=0, nT=3):
     """enforce convex hull for the station obstacle given knot points, intermediate points, and minimum station proximity
 
     Args:

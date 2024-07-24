@@ -1,13 +1,13 @@
 # clohessy wiltshire intermediate point method
 from casadi import *
 import numpy as np
-from utils import compute_path_cost_intermediate, load_station_mesh, debug_save_vars_intermediate, get_initial_intermediate
+from utils import compute_path_cost_intermediate, load_station_mesh, debug_save_vars_intermediate, get_initial_intermediate, get_Tinit, dv_to_fuel
 import os
 from sys import argv
 from constraints import enforce_station_convex_hull_IP
 from time import perf_counter
 
-def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
+def ocp_intermediate(knot_points, Tinit, T_max=36000.0, debug=False):
     """set up and solve optimal control problem for drift trajectories with obstacles using intermediate points
 
     Args:
@@ -24,6 +24,9 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
 
     # time intervals for each traj between knot points
     n_drift = (n_knots + n_intermediate) - 1 # drift periods between each knot and intermediate point
+    print(Tinit.shape, n_drift)
+    assert Tinit.shape == (n_drift, 1)
+
     print('Number of drift periods: ', n_drift)
     T = opti.variable(n_drift,1)    # drift periods between each knot and intermediate point
     # T = np.ones((n_drift,1))*T_max/n_drift # drift periods between each knot and intermediate point -- trying with constant drift periods
@@ -48,7 +51,7 @@ def ocp_intermediate(knot_points, T_max=36000.0, debug=False):
     opti.minimize(dv_tot)
 
     # set initial drift period values to a fraction of T_max/2
-    Tinit = DM.ones(n_drift,1)*T_max/n_drift/2
+    if Tinit is None: Tinit = DM.ones(n_drift,1)*T_max/n_drift/2
     opti.set_initial(T, Tinit)
 
     # warm start with reasonable values -- middle of drift trajectory
@@ -105,7 +108,10 @@ def ocp_wrapper_intermediate(view_distance, local, save_dir='intermediate', T_ma
     
     if not os.path.exists(save_folder): os.mkdir(save_folder)
 
-    sol_t, sol_x = ocp_intermediate(knot_points, T_max=T_max, debug=debug)
+    try: Tinit = get_Tinit(view_distance, local, T_max)
+    except: Tinit = None
+
+    sol_t, sol_x = ocp_intermediate(knot_points, Tinit, T_max=T_max, debug=debug)
 
     locality = ''
     if local:

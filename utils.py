@@ -105,19 +105,25 @@ def compute_path_cost(T, knot_points, square=True):
     last_v = [0,0,0]
     dv_tot = 0
     for i in range(n_knots-1):
+        dv = 0
         last_knot = knot_points[i]
         next_knot = knot_points[i+1]
         cur_T = T[i]
         vx, vy, vz = cw_v_init(last_knot, next_knot, cur_T)
-        if square: dv_tot += (last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2
-        else: dv_tot += sqrt((last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2)
+        if square: dv = (last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2
+        else: dv = sqrt((last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2)
         vx_end, vy_end, vz_end = cw_v_end(last_knot, [vx, vy, vz], cur_T)
         last_v = [vx_end, vy_end, vz_end]
-    if square: dv_tot += (last_v[0])**2 + (last_v[1])**2 + (last_v[2])**2
-    else: dv_tot += sqrt((last_v[0])**2 + (last_v[1])**2 + (last_v[2])**2)
+        dv_tot += dv
+        print(dv)
+    dv = 0
+    if square: dv = (last_v[0])**2 + (last_v[1])**2 + (last_v[2])**2
+    else: dv = sqrt((last_v[0])**2 + (last_v[1])**2 + (last_v[2])**2)
+    print(dv)
+    dv_tot += dv
     return dv_tot
 
-def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=True):
+def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=True, debug=False):
     """compute the delta-v cost of a path given drift periods between alternating knot points and intermediate points
 
     Args:
@@ -139,6 +145,7 @@ def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=T
     dv_tot = 0
 
     for i in range(n_knots-1):
+        dv = 0
         ## drift from knot point to intermediate point
         last_knot = knot_points[i]
         next_knot = intermediate_points[i,:]
@@ -146,10 +153,18 @@ def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=T
 
         # get initial velocity for drift trajectory based on cur_T
         vx, vy, vz = cw_v_init(last_knot, next_knot, cur_T)
+        if i == 0:
+            if square: dv = (last_v[0])**2 + (last_v[1])**2 + (last_v[2])**2
+            else: dv = sqrt((last_v[0])**2 + (last_v[1])**2 + (last_v[2])**2)
+            dv_tot += dv
+            if debug: print('start dv: ', dv)
 
         # compute delta-v and add to total
-        if square: dv_tot += (vx-last_v[0])**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2
-        else: dv_tot += sqrt((vx-last_v[0])**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2)
+        if square: dv = (vx-last_v[0])**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2
+        else: dv = sqrt((vx-last_v[0])**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2)
+        dv_tot += dv
+        if debug: print('knot -> ip: ', dv)
+        dv = 0
 
         # get final velocity for drift trajectory based on cur_T
         last_v = cw_v_end(last_knot, [vx, vy, vz], cur_T)
@@ -165,13 +180,22 @@ def compute_path_cost_intermediate(T, knot_points, intermediate_points, square=T
         vx, vy, vz = cw_v_init(last_knot, next_knot, cur_T)
 
         # compute delta-v and add to total
-        if square: dv_tot += (last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2
-        else: dv_tot += sqrt((last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2)
+        if square: dv = (last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2
+        else: dv = sqrt((last_v[0]-vx)**2 + (vy-last_v[1])**2 + (vz-last_v[2])**2)
+        dv_tot += dv
+        if debug: print('ip -> knot: ', dv)
+        dv = 0
 
         # get final velocity for drift trajectory based on cur_T
         last_v = cw_v_end(last_knot, [vx, vy, vz], cur_T)
         # vx_end, vy_end, vz_end = cw_v_end(last_knot, [vx, vy, vz], cur_T)
         # last_v = [vx_end, vy_end, vz_end]
+
+    if square: dv = (last_v[0])**2 + (last_v[1])**2 + (last_v[2])**2
+    else: dv = sqrt((last_v[0])**2 + (last_v[1])**2 + (last_v[2])**2)
+    dv_tot += dv
+    if debug: print('end dv: ', dv)
+
     return dv_tot
 
 def debug_save_vars_intermediate(opti, T, dv_tot, X, debug_dir, i):
@@ -253,7 +277,7 @@ def get_path(T, knots, n_drift):
 
     return full_path
 
-def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
+def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None, debug=False):
     """plot path from list of drift periods
 
     Args:
@@ -277,7 +301,7 @@ def plot_path(T, X=None, n_drift=20, distance='1.5m', local=False, axes=None):
 
         # alternate knot points and intermediate points (in correct order)
 
-        dv = compute_path_cost_intermediate(T, knotpoints, X, square=False)
+        dv = compute_path_cost_intermediate(T, knotpoints, X, square=False, debug=debug)
         fuel_cost = dv_to_fuel(dv)
         print('DV, Fuel = ', dv, fuel_cost)
 
@@ -376,6 +400,17 @@ def get_initial_intermediate(T, knots, use_numpy=False):
         IPs[i,2] = ipz
 
     return IPs
+
+def get_Tinit(view_distance, local, T_max):
+    if local: localtxt = '_local_'
+    else: localtxt = '_'
+    Tinit_file = str(view_distance) + localtxt + str(T_max) + '_t.csv'
+    Tinit_np = np.loadtxt(os.path.join(os.getcwd(), 'solns', 'obs', Tinit_file))
+    Tinit = DM.ones(Tinit_np.shape[0]*2,1)
+    for i in range(Tinit.shape[0]):
+        Tinit[i] = Tinit_np[i//2]/2
+
+    return Tinit
 
 if __name__ == "__main__":
     # checking cw_v_init:
